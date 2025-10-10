@@ -1,0 +1,99 @@
+/* Step 1/2 name row */
+.nameRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 480px) {
+  .nameRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* City / State / ZIP row */
+.addressRow {
+  display: grid;
+  grid-template-columns: 1fr 80px 100px;
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .addressRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Buttons */
+.submitBtn {
+  flex: 1;
+  justify-content: center;
+  padding: 14px 20px;
+}
+
+.backBtn {
+  justify-content: center;
+  padding: 14px 20px;
+}
+
+.step2Actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+/* Progress indicator */
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 32px;
+}
+
+.progressStep {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.35;
+  transition: opacity 0.2s;
+}
+
+.progressStepActive {
+  opacity: 1;
+}
+
+.progressDot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.progressStepActive .progressDot {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.progressLabel {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.progressLine {
+  flex: 1;
+  height: 2px;
+  background: var(--border-light);
+  margin: 0 12px;
+}
