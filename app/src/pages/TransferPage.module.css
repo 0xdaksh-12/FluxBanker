@@ -1,0 +1,74 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formPanel {
+  /* inherits bento-box */
+}
+
+.infoPanel {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.infoPanel .material-symbols-outlined {
+  color: var(--paper);
+}
+
+.infoPanelTitle {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: var(--paper);
+}
+
+.infoPanelText {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.75);
+  text-transform: none;
+  font-weight: 400;
+}
+
+@media (prefers-color-scheme: dark) {
+  .infoPanel {
+    background: var(--paper-2);
+    color: var(--ink);
+    border-color: var(--border);
+  }
+
+  .infoPanel .material-symbols-outlined {
+    color: var(--ink);
+  }
+
+  .infoPanelTitle {
+    color: var(--ink);
+  }
+
+  .infoPanelText {
+    color: var(--ink-muted);
+  }
+}
+
+.infoPanelDivider {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 24px 0;
+}
+
+.infoPanelMeta {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+}

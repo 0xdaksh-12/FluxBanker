@@ -1,0 +1,161 @@
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sidebar {
+  position: sticky;
+  top: 84px;
+}
+
+.sidebarTitle {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.accountList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.accountBtn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border: 2px solid var(--border-light);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 12px;
+  transition: border-color 0.15s, background 0.15s;
+  width: 100%;
+}
+
+.accountBtn:hover {
+  border-color: var(--border);
+  background: var(--paper-2);
+}
+
+.accountBtnActive {
+  border-color: var(--border);
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 700;
+}
+
+.accountBtnActive:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.accountBtnName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.main {
+  padding: 0;
+  overflow: hidden;
+}
+
+.mainHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1.5px solid var(--border-light);
+}
+
+.mainTitle {
+  font-size: 14px;
+  margin: 0;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pageButton {
+  background: none;
+  border: 1.5px solid var(--border);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--ink);
+}
+
+.pageButton:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.pageButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pageIndicator {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  letter-spacing: 0.05em;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sizeControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sizeInput {
+  width: 45px;
+  background: none;
+  border: 1.5px solid var(--border);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 6px;
+  color: var(--ink);
+  text-align: center;
+}
+
+.sizeInput:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+/* Hide spin buttons */
+.sizeInput::-webkit-outer-spin-button,
+.sizeInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.sizeInput[type=number] {
+  -moz-appearance: textfield;
+}
