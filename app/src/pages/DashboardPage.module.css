@@ -1,0 +1,168 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .header {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+.headerTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-size: 48px;
+  margin: 0;
+  line-height: 1;
+}
+
+.status {
+  color: var(--text-muted);
+  font-weight: bold;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.btnSharp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: var(--text-h);
+  color: var(--bg);
+  border: var(--border-width) solid var(--border);
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.btnSharp:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0px var(--border);
+}
+
+.btnIcon {
+  transition: transform 0.2s;
+}
+
+.btnSharp:hover .btnIcon {
+  transform: rotate(12deg);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+@media (min-width: 1024px) {
+  .leftColumn {
+    grid-column: span 4;
+  }
+}
+
+.chartContainer {
+  width: 100%;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.skeletonChart {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-secondary);
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+@media (min-width: 1024px) {
+  .rightColumn {
+    grid-column: span 8;
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionTitle {
+  font-size: 24px;
+}
+
+.sectionLink {
+  font-size: 12px;
+  font-weight: bold;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 2px;
+  transition: color 0.2s;
+}
+
+.sectionLink:hover {
+  color: var(--text-muted);
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 768px) {
+  .cardsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.tableContainer {
+  padding: 0;
+  overflow: hidden;
+}
+
+.loadingContainer {
+  padding: 32px;
+}
