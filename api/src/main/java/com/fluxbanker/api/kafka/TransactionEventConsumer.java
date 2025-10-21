@@ -9,8 +9,10 @@ import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.kafka.retrytopic.TopicSuffixingStrategy;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 @Component
+@ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 @Slf4j
 public class TransactionEventConsumer {
