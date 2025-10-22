@@ -9,6 +9,10 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
+    env:
+      # Prepare for GitHub Actions Node 24 migration (EOL Node 20)
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
     services:
       postgres:
         image: postgres:15-alpine
@@ -69,7 +73,10 @@ jobs:
 
   frontend:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
+
       - uses: actions/checkout@v4
       
       - name: Setup pnpm
