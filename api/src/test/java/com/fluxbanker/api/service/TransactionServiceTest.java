@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.Collections;
 import java.util.UUID;
 import com.fluxbanker.api.entity.Transaction;
+import com.fluxbanker.api.entity.Account;
+
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
@@ -32,7 +34,12 @@ public class TransactionServiceTest {
     void testGetRecentTransactions() {
         UUID accountId = UUID.randomUUID();
         Pageable pageable = PageRequest.of(0, 20);
-        Page<Transaction> page = new PageImpl<>(Collections.singletonList(new Transaction()));
+        Account mockAccount = new Account();
+        mockAccount.setId(accountId);
+        Transaction transaction = new Transaction();
+        transaction.setAccount(mockAccount);
+        Page<Transaction> page = new PageImpl<>(Collections.singletonList(transaction));
+
 
         when(transactionRepository.findByAccountIdOrderByTimestampDesc(accountId, pageable))
                 .thenReturn(page);
