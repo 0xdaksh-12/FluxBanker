@@ -34,6 +34,16 @@
       "name": "app.admin-emails",
       "type": "java.lang.String",
       "description": "Comma-separated list of email addresses automatically granted ADMIN role on registration."
+    },
+    {
+      "name": "app.kafka.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable Kafka messaging."
+    },
+    {
+      "name": "app.redis.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable Redis caching."
     }
   ]
 }
