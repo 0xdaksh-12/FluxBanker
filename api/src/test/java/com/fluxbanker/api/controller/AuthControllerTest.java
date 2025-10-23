@@ -22,7 +22,7 @@ public class AuthControllerTest {
     @Test
     public void login_WithInvalidCredentials_ShouldReturnUnauthorized() throws Exception {
         String loginJson = "{\"email\": \"wrong@example.com\", \"password\": \"wrongpass\"}";
-        
+
         mockMvc.perform(post("/api/v1/auth/login")
                 .content(loginJson)
                 .contentType(MediaType.APPLICATION_JSON))

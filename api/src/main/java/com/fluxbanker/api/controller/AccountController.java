@@ -4,6 +4,8 @@ import com.fluxbanker.api.dto.AccountDto;
 import com.fluxbanker.api.dto.TransactionDto;
 import com.fluxbanker.api.entity.Account;
 import com.fluxbanker.api.security.CustomUserDetails;
+import com.fluxbanker.api.security.SecurityUtils;
+
 import com.fluxbanker.api.service.AccountService;
 import com.fluxbanker.api.service.TransactionService;
 import lombok.RequiredArgsConstructor;
@@ -26,20 +28,25 @@ public class AccountController {
 
     @GetMapping
     public ResponseEntity<List<AccountDto>> getMyAccounts(Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        return ResponseEntity.ok(accountService.getAccountsForUser(userDetails.getUserId()));
+        UUID userId = SecurityUtils.getUserId(authentication);
+        if (userId == null)
+            return ResponseEntity.status(401).build();
+        return ResponseEntity.ok(accountService.getAccountsForUser(userId));
     }
 
-    @PostMapping({"", "/mock"})
+    @PostMapping({ "", "/mock" })
     public ResponseEntity<AccountDto> provisionAccount(
             Authentication authentication,
             @RequestBody Map<String, String> request) {
-        
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        UUID userId = SecurityUtils.getUserId(authentication);
+        if (userId == null)
+            return ResponseEntity.status(401).build();
+
         String name = request.getOrDefault("name", "Flux Checking");
         Account.Subtype subtype = Account.Subtype.valueOf(request.getOrDefault("subtype", "CHECKING").toUpperCase());
-        
-        return ResponseEntity.ok(accountService.provisionAccount(userDetails.getUserId(), name, subtype));
+
+        return ResponseEntity.ok(accountService.provisionAccount(userId, name, subtype));
     }
 
     @PostMapping("/{accountId}/deposit")
@@ -47,20 +54,23 @@ public class AccountController {
             Authentication authentication,
             @PathVariable UUID accountId,
             @RequestBody Map<String, BigDecimal> request) {
-        
+
         BigDecimal amount = request.getOrDefault("amount", BigDecimal.ZERO);
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        
-        List<AccountDto> myAccounts = accountService.getAccountsForUser(userDetails.getUserId());
+        UUID userId = SecurityUtils.getUserId(authentication);
+        if (userId == null)
+            return ResponseEntity.status(401).build();
+
+        List<AccountDto> myAccounts = accountService.getAccountsForUser(userId);
+
         boolean ownsAccount = myAccounts.stream().anyMatch(a -> a.getId().equals(accountId));
-        
+
         if (!ownsAccount) {
             return ResponseEntity.status(403).build();
         }
 
         TransactionDto tx = transactionService.depositFunds(accountId, amount);
-        accountService.evictUserAccountsCache(userDetails.getUserId());
-        
+        accountService.evictUserAccountsCache(userId);
+
         return ResponseEntity.ok(tx);
     }
 }
