@@ -47,27 +47,39 @@ Ensure you have Docker and Docker Compose installed.
 cp api/.env.example api/.env
 ```
 
-### 2. Start the Backend Infrastructure
-
-We use a root Makefile to orchestrate the entire platform. This starts Postgres, Redis, Kafka (KRaft), Prometheus, Grafana, and the Spring Boot API.
+### 2. Install Dependencies
 
 ```bash
-make up
+make install
 ```
 
-### 3. Start the Frontend
+### 3. Start the Full Stack
 
-In a new terminal window:
+We use a root Makefile to orchestrate the entire platform. To run everything (Infrastucture + API + Frontend) in dev mode:
 
 ```bash
-make dev-app
+make dev
 ```
 
-The application is now running at **http://localhost:5173**.
+Alternatively, to run just the backend in Docker:
+
+```bash
+make api-docker
+```
+
+### 4. Running Tests
+
+FluxBanker supports three testing modes:
+
+```bash
+make test          # Local H2 (fastest)
+make test-infra    # Host tests against real Docker services
+make test-docker   # Full containerized test suite
+```
 
 ## Observability
 
-- **Grafana Dashboard**: `http://localhost:3001` (admin / fluxbanker)
+- **Grafana Dashboard**: `http://localhost:3000` (admin / admin)
 - **Prometheus UI**: `http://localhost:9090`
 - **Swagger API Docs**: `http://localhost:8080/swagger-ui.html`
 

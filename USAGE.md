@@ -1,6 +1,6 @@
 # Usage Guide
 
-This guide covers how to run, develop, test, and operate FluxBanker day-to-day.
+This guide covers how to run, develop, test, and operate FluxBanker.
 
 ## Prerequisites
 
@@ -14,130 +14,85 @@ This guide covers how to run, develop, test, and operate FluxBanker day-to-day.
 
 ---
 
-## Running the Full Stack (Recommended)
+## Running the Full Stack
 
-All infrastructure (Postgres, Redis, Kafka, Prometheus, Grafana) and the Spring Boot API are orchestrated via Docker Compose.
+FluxBanker uses a root `Makefile` to orchestrate both the Spring Boot API and the React frontend along with all supporting infrastructure.
 
+### 1. Setup Environment
 ```bash
-# 1. Copy and fill in environment variables
 cp api/.env.example api/.env
+```
 
-# 2. Start everything
-make up
+### 2. Install Dependencies
+```bash
+make install
+```
 
-# 3. In a second terminal, start the frontend
-make dev-app
+### 3. Start Development Mode
+This starts all Docker services (Postgres, Redis, Kafka, Prometheus, Grafana) and runs both the API and App locally.
+```bash
+make dev
 ```
 
 The application is now live at:
 
-| Service         | URL                                        |
-| --------------- | ------------------------------------------ |
-| React SPA       | http://localhost:5173                      |
-| Spring Boot API | http://localhost:8080                      |
-| Swagger UI      | http://localhost:8080/swagger-ui.html      |
-| Grafana         | http://localhost:3001 (admin / fluxbanker) |
-| Prometheus      | http://localhost:9090                      |
+| Service         | URL                                   |
+| --------------- | ------------------------------------- |
+| React SPA       | http://localhost:5173                 |
+| Spring Boot API | http://localhost:8080                 |
+| Swagger UI      | http://localhost:8080/swagger-ui.html |
+| Grafana         | http://localhost:3000 (admin / admin) |
+| Prometheus      | http://localhost:9090                 |
 
 ---
 
-## Running Services Individually
+## Testing Modes
 
-Use this approach when you want to iterate quickly on the backend without rebuilding Docker images.
+FluxBanker is built for stability and supports three distinct execution modes for its test suite:
 
+### 1. Local (In-Memory H2)
+Fastest mode, ideal for quick feedback loops. Disables Kafka and Redis.
 ```bash
-# Start only infrastructure (DB, Redis, Kafka, monitoring)
-make up
+make test
+```
 
-# Stop the API container so we can run it locally
-docker compose -f api/docker-compose.yml stop app
+### 2. Host-to-Container
+Runs tests on your host machine against real Docker-hosted infrastructure.
+```bash
+make test-infra
+```
 
-# Run Spring Boot with hot reload
-make dev-api
-
-# Run the frontend dev server
-make dev-app
+### 3. Full Containerized
+Runs the entire test suite *inside* a Docker container, ensuring identical results between local dev and CI.
+```bash
+make test-docker
 ```
 
 ---
 
 ## Makefile Reference
 
-| Command            | Description                                         |
-| ------------------ | --------------------------------------------------- |
-| `make up`          | Start all Docker services (detached)                |
-| `make up-watch`    | Start with Docker live-reload watch                 |
-| `make down`        | Stop all services                                   |
-| `make clean`       | Stop all services and wipe all volumes (full reset) |
-| `make logs`        | Tail logs for all containers                        |
-| `make restart-api` | Restart only the Spring Boot container              |
-| `make dev-api`     | Run Spring Boot locally via Maven                   |
-| `make dev-app`     | Run Vite + React dev server                         |
-| `make build-api`   | Build the Spring Boot JAR (`-DskipTests`)           |
-| `make grafana`     | Open Grafana in the browser                         |
-| `make prometheus`  | Open Prometheus UI in the browser                   |
-| `make swagger`     | Open Swagger UI in the browser                      |
+| Command        | Description                                           |
+| -------------- | ----------------------------------------------------- |
+| `make install` | Install all API and App dependencies                  |
+| `make dev`     | Run full stack locally with Docker infra              |
+| `make api-docker` | Run API fully containerized                        |
+| `make test`    | Run local H2 tests                                    |
+| `make test-infra` | Run host tests against Docker infra                |
+| `make test-docker` | Run tests inside Docker container                 |
+| `make docker-down` | Stop all Docker containers                        |
+| `make logs`    | Tail Docker logs                                      |
+| `make clean`   | Clean build artifacts and node_modules                |
 
 ---
 
-## Environment Variables
+## Observability & Monitoring
 
-Key variables in `api/.env`:
+FluxBanker exposes high-fidelity business metrics:
+- **Ledger Health**: Transaction volumes, account provisioning rates.
+- **System Metrics**: JVM performance, Kafka lag, Redis hit rates.
 
-| Variable                | Description                                           |
-| ----------------------- | ----------------------------------------------------- |
-| `JWT_SECRET`            | HS256 secret for signing access tokens                |
-| `ADMIN_EMAILS`          | Comma-separated list of emails auto-promoted to ADMIN |
-| `GOOGLE_CLIENT_ID`      | Google OAuth2 client ID (feature currently stubbed)   |
-| `GOOGLE_CLIENT_SECRET`  | Google OAuth2 client secret                           |
-| `SPRING_DATASOURCE_URL` | JDBC connection string                                |
-| `REDIS_HOST`            | Redis hostname                                        |
-| `REDIS_PORT`            | Redis port                                            |
-
----
-
-## Linting and Formatting
-
-### Frontend
-
-```bash
-cd app
-
-# Check for lint errors
-pnpm run lint
-
-# Auto-fix lint errors
-pnpm run lint:fix
-
-# Format all files with Prettier
-pnpm run format
-```
-
-### Backend
-
-```bash
-cd api
-
-# Apply Google Java Format to all source files
-./mvnw spotless:apply
-
-# Check formatting (runs automatically on `mvn verify`)
-./mvnw spotless:check
-```
-
----
-
-## Running Tests
-
-### Backend
-
-```bash
-cd api && ./mvnw test
-```
-
-### Frontend
-
-There are currently no automated frontend tests. Contributions welcome.
+Access the pre-configured dashboards in Grafana at `http://localhost:3000`.
 
 ---
 
@@ -146,6 +101,7 @@ There are currently no automated frontend tests. Contributions welcome.
 To wipe all data (Postgres volumes, Kafka offsets, Redis cache) and start fresh:
 
 ```bash
+make docker-down
 make clean
-make up
+make dev
 ```

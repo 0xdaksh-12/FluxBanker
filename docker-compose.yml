@@ -1,11 +1,15 @@
 services:
-  app:
+  api:
     build:
-      context: .
+      context: ./api
       dockerfile: Dockerfile
     container_name: fluxbanker-api
     env_file:
-      - .env
+      - ./api/.env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/fluxbanker
+      - REDIS_HOST=redis
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     ports:
       - "8080:8080"
       - "5005:5005" # Remote debugging
@@ -20,14 +24,45 @@ services:
       watch:
         # Rebuild the image if pom.xml changes (new dependencies)
         - action: rebuild
-          path: pom.xml
+          path: ./api/pom.xml
         # Rebuild on Dockerfile changes
         - action: rebuild
-          path: Dockerfile
+          path: ./api/Dockerfile
         # Sync source code for hot-reload via spring-boot-devtools
         - action: sync
-          path: ./src
+          path: ./api/src
           target: /app/src
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: fluxbanker-app
+    env_file:
+      - ./app/.env
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+  tester:
+    image: eclipse-temurin:17-jdk-jammy
+    container_name: fluxbanker-tester
+    volumes:
+      - ./api:/app
+    working_dir: /app
+    environment:
+      - SPRING_PROFILES_ACTIVE=test-infra
+      - DB_HOST=postgres
+      - REDIS_HOST=redis
+      - KAFKA_HOST=kafka
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
 
   postgres:
     image: postgres:15-alpine
@@ -105,13 +140,11 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./api/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--log.level=warn"
-    depends_on:
-      - app
 
   grafana:
     image: grafana/grafana:latest
