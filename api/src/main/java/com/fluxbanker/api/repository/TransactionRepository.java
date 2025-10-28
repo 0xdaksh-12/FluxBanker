@@ -11,4 +11,6 @@ import java.util.UUID;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
     Page<Transaction> findByAccountIdOrderByTimestampDesc(UUID accountId, Pageable pageable);
+    
+    Page<Transaction> findByAccountUserIdOrderByTimestampDesc(UUID userId, Pageable pageable);
 }

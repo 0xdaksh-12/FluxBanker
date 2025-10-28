@@ -3,7 +3,6 @@ package com.fluxbanker.api.controller;
 import com.fluxbanker.api.dto.AccountDto;
 import com.fluxbanker.api.dto.TransactionDto;
 import com.fluxbanker.api.entity.Account;
-import com.fluxbanker.api.security.CustomUserDetails;
 import com.fluxbanker.api.security.SecurityUtils;
 
 import com.fluxbanker.api.service.AccountService;
