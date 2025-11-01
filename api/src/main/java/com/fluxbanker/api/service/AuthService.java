@@ -22,7 +22,6 @@ import java.util.UUID;
 
 /**
  * Core authentication business logic.
- * Mirrors Node's controller/authController.js.
  */
 @Service
 @RequiredArgsConstructor
@@ -47,7 +46,6 @@ public class AuthService {
 
     /**
      * Registers a new user, creates a session, and sets the refresh token cookie.
-     * Mirrors Node's register() handler.
      *
      * @param request  the register request DTO
      * @param req      HTTP request (for userAgent + IP)
@@ -88,8 +86,6 @@ public class AuthService {
     /**
      * Authenticates a user by email/password, creates a session, and sets the
      * refresh token cookie.
-     * Returns both the access token and user name to match the Node login response.
-     * Mirrors Node's login() handler.
      *
      * @param request  the login request DTO
      * @param req      HTTP request (for userAgent + IP)
@@ -114,7 +110,6 @@ public class AuthService {
 
     /**
      * Invalidates the session and clears the refresh token cookie.
-     * Mirrors Node's logout() handler.
      *
      * @param sessionId the session to invalidate
      * @param response  HTTP response (for clearing the cookie)
@@ -126,7 +121,7 @@ public class AuthService {
 
     /**
      * Validates the refresh token cookie, optionally rotates the refresh token,
-     * and returns a new access token. Mirrors Node's refresh() handler.
+     * and returns a new access token.
      *
      * @param req      HTTP request (reads the refresh token cookie)
      * @param response HTTP response (optional new refresh cookie)
@@ -138,26 +133,28 @@ public class AuthService {
             return null; // Controller sends 204
         }
 
-        Claims claims = jwtService.verifyRefreshToken(cookieToken);
-        UUID userId = UUID.fromString(claims.getSubject());
-        UUID sessionId = UUID.fromString(claims.get("sessionId", String.class));
+        try {
+            Claims claims = jwtService.verifyRefreshToken(cookieToken);
+            UUID userId = UUID.fromString(claims.getSubject());
+            UUID sessionId = UUID.fromString(claims.get("sessionId", String.class));
 
-        sessionService.checkSession(cookieToken, sessionId);
+            sessionService.checkSession(cookieToken, sessionId);
 
-        String accessToken = jwtService.generateAccessToken(userId, sessionId);
+            String accessToken = jwtService.generateAccessToken(userId, sessionId);
 
-        // Rotate refresh token if past its halfway point (mirrors Node's
-        // isTokenHalfExpired check)
-        if (jwtService.isTokenHalfExpired(claims)) {
-            String newRefreshToken = jwtService.generateRefreshToken(userId, sessionId);
-            sessionService.saveToken(sessionId, newRefreshToken);
-            setRefreshCookie(response, newRefreshToken);
+            // Rotate refresh token if past its halfway point
+            if (jwtService.isTokenHalfExpired(claims)) {
+                String newRefreshToken = jwtService.generateRefreshToken(userId, sessionId);
+                sessionService.saveToken(sessionId, newRefreshToken);
+                setRefreshCookie(response, newRefreshToken);
+            }
+
+            return accessToken;
+        } catch (UnauthorizedException e) {
+            clearRefreshCookie(response);
+            throw e;
         }
-
-        return accessToken;
     }
-
-    // --- Cookie helpers (mirrors Node's utils/tokenManager.js) ---
 
     /**
      * Writes the refresh token as an HTTP-only cookie.
@@ -191,11 +188,8 @@ public class AuthService {
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
-    // --- Private helpers ---
-
     /**
      * Creates an auth session and issues access + refresh tokens.
-     * Mirrors Node's createAuthSession() helper.
      *
      * @param user     the authenticated user
      * @param req      HTTP request
