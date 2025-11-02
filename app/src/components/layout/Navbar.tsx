@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { useThemeStore } from "../../store/themeStore";
 import { apiClient } from "../../api/client";
 import { toast } from "sonner";
+import { ProfileModal } from "../ui/ProfileModal";
 import styles from "./Navbar.module.css";
 
 export const Navbar = () => {
   const { user, logout } = useAuthStore();
   const { theme, toggle } = useThemeStore();
   const navigate = useNavigate();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -95,6 +98,13 @@ export const Navbar = () => {
         </span>
         <button
           className={styles.themeBtn}
+          onClick={() => setIsProfileOpen(true)}
+          title="Profile Settings"
+        >
+          <span className="material-symbols-outlined">person</span>
+        </button>
+        <button
+          className={styles.themeBtn}
           onClick={toggle}
           title={
             theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"
@@ -108,6 +118,8 @@ export const Navbar = () => {
           <span className="material-symbols-outlined">logout</span>
         </button>
       </div>
+
+      <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
     </nav>
   );
 };
