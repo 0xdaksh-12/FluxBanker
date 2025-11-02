@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useAuthStore } from "../store/authStore";
 import { useAccounts } from "../hooks/useAccounts";
-import { useTransactions } from "../hooks/useTransactions";
+import { useUserTransactions } from "../hooks/useTransactions";
 import { BalanceWidget } from "../components/ui/BalanceWidget";
 import { DoughnutChart } from "../components/ui/DoughnutChart";
 import { BankCard } from "../components/ui/BankCard";
@@ -15,9 +15,7 @@ export const DashboardPage = () => {
   const user = useAuthStore((state) => state.user);
   const { data: accounts, isLoading: accountsLoading } = useAccounts();
 
-  const primaryAccountId = accounts?.[0]?.id || null;
-  const { data: transactions, isLoading: txLoading } =
-    useTransactions(primaryAccountId);
+  const { data: transactions, isLoading: txLoading } = useUserTransactions(0, 5);
 
   const totalBalance = useMemo(
     () => accounts?.reduce((sum, acc) => sum + acc.currentBalance, 0) || 0,
