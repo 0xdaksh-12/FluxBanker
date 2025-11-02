@@ -1,12 +1,12 @@
 package com.fluxbanker.api;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
- * Integration smoke test — requires Docker Compose. Run manually when needed.
+ * Integration smoke test.
  */
-@Disabled("Requires live Postgres via Docker Compose — run manually")
+@SpringBootTest
 class FluxBankerApiApplicationTests {
 
     @Test
