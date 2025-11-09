@@ -64,8 +64,8 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: postgres
           REDIS_HOST: localhost
           KAFKA_BOOTSTRAP_SERVERS: localhost:9092
-          JWT_SECRET_ACCESS: test_secret_access_test_secret_access_test_secret
-          JWT_SECRET_REFRESH: test_secret_refresh_test_secret_refresh_test_secret
+          JWT_SECRET_ACCESS: bXktc3VwZXItc2VjcmV0LWtleS10aGF0LWlzLWF0LWxlYXN0LTMyLWJ5dGVzLWxvbmctZm9yLWp3dA==
+          JWT_SECRET_REFRESH: bXktc3VwZXItc2VjcmV0LWtleS10aGF0LWlzLWF0LWxlYXN0LTMyLWJ5dGVzLWxvbmctZm9yLWp3dA==
           GOOGLE_CLIENT_ID: mock-client-id
           GOOGLE_CLIENT_SECRET: mock-client-secret
 
