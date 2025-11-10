@@ -8,6 +8,7 @@ on:
 
 jobs:
   backend:
+    name: Build and Test API
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -68,6 +69,7 @@ jobs:
           JWT_SECRET_REFRESH: ${{ secrets.JWT_SECRET_REFRESH }}
 
   frontend:
+    name: Build Frontend
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
