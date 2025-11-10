@@ -91,5 +91,8 @@ jobs:
       - name: Install dependencies
         run: cd app && pnpm install
 
+      - name: Lint and Type Check
+        run: cd app && pnpm run lint && pnpm exec tsc
+
       - name: Build App
         run: cd app && pnpm run build
