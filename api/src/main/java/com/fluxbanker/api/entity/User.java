@@ -18,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "password")
 public class User implements UserDetails {
 
     @Id
@@ -60,9 +61,23 @@ public class User implements UserDetails {
     @Builder.Default
     private boolean isEmailVerified = false;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private KycStatus kycStatus = KycStatus.PENDING;
+
+    public enum KycStatus {
+        PENDING, APPROVED, REJECTED
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.fluxbanker.api.exception;
 
 import com.fluxbanker.api.dto.response.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -15,6 +16,7 @@ import java.util.List;
  * All responses follow the { success, message, errors? } contract.
  */
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(UnauthorizedException.class)
@@ -69,6 +71,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
+    log.warn("Access denied: {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
         ErrorResponse.builder()
             .success(false)
@@ -87,7 +90,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
-    ex.printStackTrace();
+    log.error("Unhandled exception: ", ex);
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
         ErrorResponse.builder()
             .success(false)

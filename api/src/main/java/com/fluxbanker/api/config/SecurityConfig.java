@@ -38,6 +38,9 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http)
       throws Exception {
     return http
+        // CSRF is disabled as we use stateless JWT authentication.
+        // Refresh tokens are stored in HttpOnly cookies, but access tokens are handled
+        // via headers.
         .csrf(AbstractHttpConfigurer::disable)
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .sessionManagement(session -> session
@@ -48,7 +51,11 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST,
                 "/api/v1/auth/register",
                 "/api/v1/auth/login",
-                "/api/v1/auth/refresh")
+                "/api/v1/auth/refresh",
+                "/api/v1/auth/forgot-password",
+                "/api/v1/auth/reset-password")
+            .permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/auth/validate-reset-token", "/api/v1/auth/verify-email")
             .permitAll()
             .anyRequest().authenticated())
 
