@@ -96,6 +96,43 @@ public class TransactionService {
     }
 
     @Transactional
+    public void externalTransfer(UUID sourceAccountId, String routingNumber, String accountNumber, String recipientName, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Transfer amount must be positive");
+        }
+
+        Account sourceAccount = accountRepository.findById(sourceAccountId)
+                .orElseThrow(() -> new IllegalArgumentException("Source account not found"));
+
+        if (sourceAccount.getAvailableBalance().compareTo(amount) < 0) {
+            throw new IllegalStateException("Insufficient funds");
+        }
+
+        // Debit Source
+        sourceAccount.setAvailableBalance(sourceAccount.getAvailableBalance().subtract(amount));
+        sourceAccount.setCurrentBalance(sourceAccount.getCurrentBalance().subtract(amount));
+        accountRepository.save(sourceAccount);
+
+        Transaction debitTx = Transaction.builder()
+                .account(sourceAccount)
+                .amount(amount.negate())
+                .type(Transaction.Type.TRANSFER)
+                .status(Transaction.Status.PENDING) // External transfers start as PENDING
+                .category("External Transfer to " + recipientName + " (" + maskExternalAccount(accountNumber) + ")")
+                .counterpartyName(recipientName)
+                .build();
+        transactionRepository.save(debitTx);
+
+        // We don't credit a destination account because it's external.
+        // In a real system, we'd fire an event to an ACH/Wire processor.
+    }
+
+    private String maskExternalAccount(String accountNum) {
+        if (accountNum == null || accountNum.length() < 4) return "****";
+        return "*" + accountNum.substring(accountNum.length() - 4);
+    }
+
+    @Transactional
     public TransactionDto depositFunds(UUID accountId, BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Deposit amount must be positive");
@@ -119,6 +156,38 @@ public class TransactionService {
 
         Transaction savedTx = transactionRepository.save(depositTx);
         eventProducer.publish(TransactionEvent.deposit(accountId, amount));
+
+        return mapToDto(savedTx);
+    }
+
+    @Transactional
+    public TransactionDto withdrawFunds(UUID accountId, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Withdrawal amount must be positive");
+        }
+
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+
+        if (account.getAvailableBalance().compareTo(amount) < 0) {
+            throw new IllegalStateException("Insufficient funds");
+        }
+
+        account.setAvailableBalance(account.getAvailableBalance().subtract(amount));
+        account.setCurrentBalance(account.getCurrentBalance().subtract(amount));
+        accountRepository.save(account);
+
+        Transaction withdrawalTx = Transaction.builder()
+                .account(account)
+                .amount(amount.negate())
+                .type(Transaction.Type.WITHDRAWAL)
+                .status(Transaction.Status.COMPLETED)
+                .category("ATM Withdrawal")
+                .counterpartyName("System")
+                .build();
+
+        Transaction savedTx = transactionRepository.save(withdrawalTx);
+        eventProducer.publish(TransactionEvent.withdrawal(accountId, amount));
 
         return mapToDto(savedTx);
     }

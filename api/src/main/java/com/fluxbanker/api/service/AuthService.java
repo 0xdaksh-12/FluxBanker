@@ -7,8 +7,13 @@ import com.fluxbanker.api.entity.User;
 import com.fluxbanker.api.exception.ConflictException;
 import com.fluxbanker.api.exception.UnauthorizedException;
 import io.jsonwebtoken.Claims;
+import com.fluxbanker.api.dto.request.ForgotPasswordRequest;
+import com.fluxbanker.api.dto.request.ResetPasswordRequest;
+import com.fluxbanker.api.entity.PasswordResetToken;
+import com.fluxbanker.api.repository.PasswordResetTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import com.fluxbanker.api.entity.Account;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +36,9 @@ public class AuthService {
     private final SessionService sessionService;
     private final JwtService jwtService;
     private final AccountService accountService;
+    private final EmailService emailService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Value("${jwt.refresh-expiration-ms}")
     private long refreshExpirationMs;
@@ -74,8 +81,12 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(userRole)
+                .kycStatus(userRole == User.Role.ADMIN ? User.KycStatus.APPROVED : User.KycStatus.PENDING)
                 .build();
         user = userService.createUser(user);
+
+        // Send verification email via UserService to handle token generation
+        userService.sendVerificationEmail(user.getId());
 
         // Auto-provision a default checking account for the new user
         accountService.provisionAccount(user.getId(), "Flux Checking", Account.Subtype.CHECKING);
@@ -90,9 +101,9 @@ public class AuthService {
      * @param request  the login request DTO
      * @param req      HTTP request (for userAgent + IP)
      * @param response HTTP response (for setting the cookie)
-     * @return String[] { accessToken, userName }
+     * @return String accessToken
      */
-    public String[] loginWithName(LoginRequest request, HttpServletRequest req, HttpServletResponse response) {
+    public String login(LoginRequest request, HttpServletRequest req, HttpServletResponse response) {
         User user;
         try {
             user = userService.getUserByEmail(request.getEmail());
@@ -104,8 +115,7 @@ public class AuthService {
             throw new UnauthorizedException("Invalid credentials");
         }
 
-        String accessToken = createAuthSession(user, req, response);
-        return new String[] { accessToken, user.getFirstName() + " " + user.getLastName() };
+        return createAuthSession(user, req, response);
     }
 
     /**
@@ -150,10 +160,87 @@ public class AuthService {
             }
 
             return accessToken;
-        } catch (UnauthorizedException e) {
+        } catch (Exception e) {
+            // If refresh token fails for ANY reason, remove it as requested
             clearRefreshCookie(response);
-            throw e;
+            throw new UnauthorizedException("Invalid refresh token");
         }
+    }
+
+    /**
+     * Generates a password reset token and sends an email.
+     * @param request the forgot password request
+     */
+    @Transactional
+    public void forgotPassword(ForgotPasswordRequest request) {
+        User user = userService.getUserByEmail(request.getEmail());
+        
+        // Delete existing tokens if any
+        passwordResetTokenRepository.deleteByUser(user);
+
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken resetToken = PasswordResetToken.builder()
+                .token(token)
+                .user(user)
+                .expiryDate(java.time.Instant.now().plus(Duration.ofHours(1)))
+                .build();
+        
+        passwordResetTokenRepository.save(resetToken);
+        emailService.sendPasswordResetEmail(user.getEmail(), token);
+    }
+
+    /**
+     * Validates a reset token and increments click count.
+     * @param token the token string
+     * @return the associated user
+     */
+    @Transactional
+    public User validateResetToken(String token) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
+                .orElseThrow(() -> new UnauthorizedException("Invalid password reset token"));
+
+        if (resetToken.isInvalid()) {
+            throw new UnauthorizedException("Token is expired, already used, or exceeded click limit");
+        }
+
+        resetToken.setClickCount(resetToken.getClickCount() + 1);
+        passwordResetTokenRepository.save(resetToken);
+
+        return resetToken.getUser();
+    }
+
+    /**
+     * Resets the user's password using a token.
+     * @param request the reset password request
+     */
+    @Transactional
+    public void resetPassword(ResetPasswordRequest request) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(request.getToken())
+                .orElseThrow(() -> new UnauthorizedException("Invalid password reset token"));
+
+        if (resetToken.isInvalid()) {
+            throw new UnauthorizedException("Token is invalid or expired");
+        }
+
+        User user = resetToken.getUser();
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        userService.saveUser(user);
+
+        resetToken.setUsed(true);
+        passwordResetTokenRepository.save(resetToken);
+
+        if (request.isSignOutAll()) {
+            invalidateAllSessions(user.getId());
+        }
+    }
+
+    /**
+     * Invalidates all sessions for a specific user.
+     * @param userId the user's UUID
+     */
+    @Transactional
+    public void invalidateAllSessions(UUID userId) {
+        sessionService.invalidateAllUserSessions(userId);
     }
 
     /**

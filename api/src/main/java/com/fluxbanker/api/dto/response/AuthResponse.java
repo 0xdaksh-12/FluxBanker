@@ -3,6 +3,7 @@ package com.fluxbanker.api.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * Unified auth response.
@@ -10,6 +11,7 @@ import lombok.Getter;
  */
 @Getter
 @Builder
+@ToString(exclude = "token")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthResponse {
     private final boolean success;
@@ -18,7 +20,6 @@ public class AuthResponse {
     /** JWT access token. */
     private final String token;
 
-    private final String name;
 
     /** Optional user object, populated on registration. */
     private final UserResponse user;

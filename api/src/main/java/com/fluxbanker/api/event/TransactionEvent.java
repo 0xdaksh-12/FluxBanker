@@ -20,4 +20,8 @@ public record TransactionEvent(
     public static TransactionEvent deposit(UUID accountId, BigDecimal amount) {
         return new TransactionEvent(UUID.randomUUID(), "DEPOSIT", null, accountId, amount, "COMPLETED", Instant.now());
     }
+
+    public static TransactionEvent withdrawal(UUID accountId, BigDecimal amount) {
+        return new TransactionEvent(UUID.randomUUID(), "WITHDRAWAL", accountId, null, amount, "COMPLETED", Instant.now());
+    }
 }
