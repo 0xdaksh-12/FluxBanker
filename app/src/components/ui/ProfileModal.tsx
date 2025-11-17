@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -7,6 +7,7 @@ import {
   useUpdateProfile,
   useVerifyEmail,
   useRequestPasswordReset,
+  useMe,
 } from "../../hooks/useUser";
 import { Modal } from "./Modal";
 import { toast } from "sonner";
@@ -33,10 +34,15 @@ type Tab = "general" | "security";
 
 export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
   const [activeTab, setActiveTab] = useState<Tab>("general");
-  const user = useAuthStore((state) => state.user);
-  const updateProfile = useUpdateProfile();
-  const verifyEmail = useVerifyEmail();
-  const passwordReset = useRequestPasswordReset();
+  const authUser = useAuthStore((state) => state.user);
+  const { data: userData, isLoading: isUserLoading } = useMe(isOpen);
+  const user = userData || authUser;
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const accessToken = useAuthStore((state) => state.accessToken);
+  
+  const profileMutation = useUpdateProfile();
+  const verifyEmailMutation = useVerifyEmail();
+  const passwordResetMutation = useRequestPasswordReset();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +58,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
     reader.onloadend = async () => {
       const base64String = reader.result as string;
       try {
-        await updateProfile.mutateAsync({ profilePic: base64String });
+        await profileMutation.mutateAsync({ profilePic: base64String });
         toast.success("Profile picture updated");
       } catch {
         toast.error("Failed to update profile picture");
@@ -64,6 +70,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
   const {
     register,
     handleSubmit,
+    reset: resetForm,
     formState: { errors, isSubmitting },
   } = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
@@ -78,9 +85,31 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
     },
   });
 
+  // Update local store when fresh data arrives
+  useEffect(() => {
+    if (userData && accessToken) {
+      setAuth(userData, accessToken);
+    }
+  }, [userData, accessToken, setAuth]);
+
+  // Re-sync form when user data changes
+  useEffect(() => {
+    if (user) {
+      resetForm({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        dateOfBirth: user.dateOfBirth || "",
+        address1: user.address1 || "",
+        city: user.city || "",
+        state: user.state || "",
+        pinCode: user.pinCode || "",
+      });
+    }
+  }, [user, resetForm, isOpen]);
+
   const onUpdateProfile = async (data: ProfileValues) => {
     try {
-      await updateProfile.mutateAsync(data);
+      await profileMutation.mutateAsync(data);
       toast.success("Profile updated successfully");
       onClose();
     } catch {
@@ -90,7 +119,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
 
   const handleVerifyEmail = async () => {
     try {
-      await verifyEmail.mutateAsync();
+      await verifyEmailMutation.mutateAsync();
       toast.success("Email verified successfully");
     } catch {
       toast.error("Failed to verify email");
@@ -99,7 +128,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
 
   const handlePasswordReset = async () => {
     try {
-      await passwordReset.mutateAsync();
+      await passwordResetMutation.mutateAsync();
       toast.success("Password reset link sent to your email!");
     } catch {
       toast.error("Failed to request password reset");
@@ -109,7 +138,11 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="User Profile">
       <div className={styles.container}>
-        {/* Tab Switcher */}
+        {isUserLoading && !user ? (
+          <div className={styles.loading}>Loading profile...</div>
+        ) : (
+          <>
+            {/* Tab Switcher */}
         <div className={styles.tabs}>
           <button
             onClick={() => setActiveTab("general")}
@@ -265,9 +298,9 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
                       onClick={handleVerifyEmail}
                       className="btn btn-primary"
                       style={{ padding: "4px 12px", fontSize: "10px" }}
-                      disabled={verifyEmail.isPending}
+                      disabled={verifyEmailMutation.isPending}
                     >
-                      {verifyEmail.isPending ? "Verifying..." : "Verify Now"}
+                      {verifyEmailMutation.isPending ? "Verifying..." : "Verify Now"}
                     </button>
                   )}
                 </div>
@@ -315,7 +348,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
                   className="btn btn-outline"
                   style={{ width: "100%", marginTop: "var(--space-2)" }}
                   onClick={handlePasswordReset}
-                  disabled={passwordReset.isPending}
+                  disabled={passwordResetMutation.isPending}
                 >
                   <span
                     className="material-symbols-outlined"
@@ -323,7 +356,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
                   >
                     lock_reset
                   </span>
-                  {passwordReset.isPending
+                  {passwordResetMutation.isPending
                     ? "Sending Link..."
                     : "Update Password"}
                 </button>
@@ -354,6 +387,8 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
             )}
           </div>
         </form>
+          </>
+        )}
       </div>
     </Modal>
   );

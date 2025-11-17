@@ -60,6 +60,15 @@ export const Navbar = () => {
           Accounts
         </NavLink>
         <NavLink
+          to="/cards"
+          className={({ isActive }) =>
+            `${styles.link} ${isActive ? styles.linkActive : ""}`
+          }
+        >
+          <span className="material-symbols-outlined">credit_card</span>
+          Cards
+        </NavLink>
+        <NavLink
           to="/transactions"
           className={({ isActive }) =>
             `${styles.link} ${isActive ? styles.linkActive : ""}`

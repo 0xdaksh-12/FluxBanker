@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useAuthStore } from "../../store/authStore";
 import { login } from "../../api/auth";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import styles from "./LoginForm.module.css";
 import { useState } from "react";
@@ -111,6 +111,14 @@ export const LoginForm = () => {
         {errors.password && (
           <span className="form-error">{errors.password.message}</span>
         )}
+        <div style={{ textAlign: "right", marginTop: "0.5rem" }}>
+          <Link
+            to="/forgot-password"
+            style={{ fontSize: "0.75rem", color: "var(--ink-muted)", fontWeight: 600 }}
+          >
+            Forgot Password?
+          </Link>
+        </div>
       </div>
 
       <button

@@ -85,3 +85,23 @@ export const refresh = async (): Promise<AuthResponse | null> => {
 export const logout = async (): Promise<void> => {
   await apiClient.post("/auth/logout");
 };
+
+export const forgotPassword = async (email: string): Promise<void> => {
+  await apiClient.post("/auth/forgot-password", { email });
+};
+
+export const validateResetToken = async (token: string): Promise<void> => {
+  await apiClient.get(`/auth/validate-reset-token?token=${token}`);
+};
+
+export const resetPassword = async (
+  token: string,
+  password: string,
+  signOutAll: boolean,
+): Promise<void> => {
+  await apiClient.post("/auth/reset-password", { token, password, signOutAll });
+};
+
+export const verifyEmail = async (token: string): Promise<void> => {
+  await apiClient.get(`/auth/verify-email?token=${token}`);
+};

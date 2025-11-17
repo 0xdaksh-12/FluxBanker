@@ -23,3 +23,23 @@ export const depositFunds = async (
 ): Promise<void> => {
   await apiClient.post(`/accounts/${accountId}/deposit`, { amount });
 };
+
+export const applyForLoan = async (
+  principal: number,
+  termMonths: number,
+): Promise<Account> => {
+  const { data } = await apiClient.post<Account>("/accounts/loan", {
+    principal,
+    termMonths,
+  });
+  return data;
+};
+
+export const openCreditCard = async (
+  creditLimit: number,
+): Promise<Account> => {
+  const { data } = await apiClient.post<Account>("/accounts/credit-card", {
+    creditLimit,
+  });
+  return data;
+};

@@ -20,3 +20,11 @@ export const getAllTransactions = async (
   );
   return data;
 };
+
+export const updateKycStatus = async (
+  userId: string,
+  status: "PENDING" | "APPROVED" | "REJECTED"
+): Promise<User> => {
+  const { data } = await apiClient.post<User>(`/users/${userId}/kyc`, { status });
+  return data;
+};
