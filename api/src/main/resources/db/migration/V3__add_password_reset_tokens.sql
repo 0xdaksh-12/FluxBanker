@@ -1,0 +1,10 @@
+CREATE TABLE password_reset_tokens (
+    id UUID PRIMARY KEY,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    user_id UUID NOT NULL,
+    expiry_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    click_count INTEGER NOT NULL DEFAULT 0,
+    max_clicks INTEGER NOT NULL DEFAULT 3,
+    used BOOLEAN NOT NULL DEFAULT FALSE,
+    CONSTRAINT fk_user_reset FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
