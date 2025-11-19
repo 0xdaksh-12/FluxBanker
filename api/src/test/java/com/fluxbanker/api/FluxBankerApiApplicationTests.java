@@ -6,7 +6,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 /**
  * Integration smoke test.
  */
+import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
+@ActiveProfiles("test")
 class FluxBankerApiApplicationTests {
 
     @Test

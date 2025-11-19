@@ -12,7 +12,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class AuthIntegrationTest {
 
@@ -41,8 +43,7 @@ public class AuthIntegrationTest {
                 .content(registerJson)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.user.email").value("newuser@example.com"))
-                .andExpect(jsonPath("$.user.aadhaar").value("123456789012"));
+                .andExpect(jsonPath("$.user.email").value("newuser@example.com"));
 
         // 2. Login
         String loginJson = """

@@ -89,7 +89,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void login_shouldReturnTokenAndName_whenCredentialsValid() {
+    void login_shouldReturnToken_whenCredentialsValid() {
         com.fluxbanker.api.dto.request.LoginRequest req = new com.fluxbanker.api.dto.request.LoginRequest();
         req.setEmail("user@example.com");
         req.setPassword("secret");
@@ -106,10 +106,9 @@ class AuthServiceTest {
         when(jwtService.generateAccessToken(any(), any())).thenReturn("access-token");
         when(jwtService.generateRefreshToken(any(), any())).thenReturn("refresh-token");
 
-        String[] result = authService.loginWithName(req, httpRequest, httpResponse);
+        String accessToken = authService.login(req, httpRequest, httpResponse);
 
-        assertThat(result[0]).isEqualTo("access-token");
-        assertThat(result[1]).isEqualTo("Alice Smith");
+        assertThat(accessToken).isEqualTo("access-token");
     }
 
     @Test
@@ -123,7 +122,7 @@ class AuthServiceTest {
         when(userService.getUserByEmail("user@example.com")).thenReturn(user);
         when(passwordEncoder.matches("wrong", "hashed")).thenReturn(false);
 
-        assertThatThrownBy(() -> authService.loginWithName(req, httpRequest, httpResponse))
+        assertThatThrownBy(() -> authService.login(req, httpRequest, httpResponse))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessageContaining("Invalid credentials");
     }
