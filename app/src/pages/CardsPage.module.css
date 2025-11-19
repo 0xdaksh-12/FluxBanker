@@ -1,0 +1,237 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.cardContainer {
+  perspective: 1000px;
+  width: 100%;
+  aspect-ratio: 1.586;
+  position: relative;
+  cursor: pointer;
+}
+
+.cardInner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.cardContainer.flipped .cardInner {
+  transform: rotateY(180deg);
+}
+
+.cardFront,
+.cardBack {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 0;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: var(--bw-thick) solid var(--border);
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.cardContainer:hover .cardFront {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Because cardBack is rotated 180deg, translations and shadows invert */
+.cardBack {
+  transform: rotateY(180deg);
+  background: var(--paper-2);
+  color: var(--ink);
+}
+
+.cardContainer:hover .cardBack {
+  transform: rotateY(180deg) translate(2px, -2px);
+  box-shadow: -8px 8px 0px var(--border);
+}
+
+.physicalCard {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.virtualCard {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.cardFront.frozen {
+  background: var(--paper-3);
+  color: var(--ink-muted);
+}
+.physicalCard.frozen {
+  background: #333333;
+  color: #888888;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bankName {
+  font-family: var(--sans);
+  font-weight: 900;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.cardTypeBrand {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.chipSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.chip {
+  width: 40px;
+  height: 28px;
+  background: transparent;
+  border: var(--bw-thick) solid currentColor;
+  border-radius: 0;
+  position: relative;
+}
+
+.chip::after {
+  content: "";
+  position: absolute;
+  top: 35%;
+  left: 0;
+  width: 100%;
+  height: var(--bw-thick);
+  background: currentColor;
+}
+
+.wifiIcon {
+  font-size: 24px;
+  transform: rotate(90deg);
+  font-weight: 700;
+}
+
+.cardNumber {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-top: auto;
+  margin-bottom: var(--space-5);
+}
+
+.cardDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.cardHolder {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardExpiry {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.label {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: inherit;
+  opacity: 0.7;
+  margin-bottom: 2px;
+}
+
+.value {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Back of card styles */
+.magStripe {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  width: 100%;
+  height: 45px;
+  background: var(--ink);
+  border-top: var(--bw-thick) solid var(--border);
+  border-bottom: var(--bw-thick) solid var(--border);
+}
+
+.signature {
+  position: absolute;
+  top: 100px;
+  left: 24px;
+  width: 70%;
+  height: 35px;
+  background: var(--paper);
+  border: var(--bw-thick) solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 12px;
+}
+
+.cvv {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.frozenBadge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--negative-bg);
+  color: var(--negative);
+  border: var(--bw-thick) solid var(--negative);
+  padding: 8px 16px;
+  font-family: var(--sans);
+  font-weight: 900;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  z-index: 10;
+  box-shadow: 4px 4px 0px var(--negative);
+}
+
+.actionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
