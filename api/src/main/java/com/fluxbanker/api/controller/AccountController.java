@@ -55,8 +55,14 @@ public class AccountController {
             return ResponseEntity.status(401).build();
 
         UUID userId = userDetails.getUserId();
-        BigDecimal principalAmount = new BigDecimal(request.getOrDefault("principalAmount", "5000").toString());
-        Integer termMonths = Integer.parseInt(request.getOrDefault("termMonths", "36").toString());
+        BigDecimal principalAmount;
+        Integer termMonths;
+        try {
+            principalAmount = new BigDecimal(request.getOrDefault("principalAmount", "5000").toString());
+            termMonths = Integer.parseInt(request.getOrDefault("termMonths", "36").toString());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().build();
+        }
 
         return ResponseEntity.ok(accountService.applyForLoan(userId, principalAmount, termMonths));
     }
@@ -70,7 +76,12 @@ public class AccountController {
             return ResponseEntity.status(401).build();
 
         UUID userId = userDetails.getUserId();
-        BigDecimal creditLimit = new BigDecimal(request.getOrDefault("creditLimit", "10000").toString());
+        BigDecimal creditLimit;
+        try {
+            creditLimit = new BigDecimal(request.getOrDefault("creditLimit", "10000").toString());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().build();
+        }
 
         return ResponseEntity.ok(accountService.openCreditCard(userId, creditLimit));
     }
@@ -145,7 +156,12 @@ public class AccountController {
             return ResponseEntity.status(403).build();
         }
 
-        BigDecimal amount = new BigDecimal(request.getOrDefault("amount", "0").toString());
+        BigDecimal amount;
+        try {
+            amount = new BigDecimal(request.getOrDefault("amount", "0").toString());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().build();
+        }
         String routingNumber = (String) request.get("routingNumber");
         String accountNumber = (String) request.get("accountNumber");
         String recipientName = (String) request.get("recipientName");

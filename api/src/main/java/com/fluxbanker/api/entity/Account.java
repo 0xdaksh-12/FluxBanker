@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = "user")
+@ToString(exclude = { "user", "creditDetails", "loanDetails" })
 public class Account {
 
     @Id
