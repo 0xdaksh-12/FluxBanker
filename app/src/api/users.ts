@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import { User } from "../types";
+import type { User } from "../types";
 
 export const updateProfile = async (data: Partial<User>): Promise<User> => {
   const { data: userData } = await apiClient.patch<User>("/users/me", data);
@@ -7,7 +7,9 @@ export const updateProfile = async (data: Partial<User>): Promise<User> => {
 };
 
 export const verifyEmail = async (): Promise<User> => {
-  const { data: userData } = await apiClient.post<User>("/users/me/verify-email");
+  const { data: userData } = await apiClient.post<User>(
+    "/users/me/verify-email",
+  );
   return userData;
 };
 

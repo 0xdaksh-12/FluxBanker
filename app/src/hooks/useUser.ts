@@ -6,7 +6,7 @@ import {
   getMe,
 } from "../api/users";
 import { useAuthStore } from "../store/authStore";
-import { User } from "../types";
+import type { User } from "../types";
 
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
