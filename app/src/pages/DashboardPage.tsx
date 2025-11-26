@@ -21,7 +21,7 @@ export const DashboardPage = () => {
   );
 
   const totalBalance = useMemo(
-    () => accounts?.reduce((sum, acc) => sum + acc.currentBalance, 0) || 0,
+    () => accounts?.reduce((sum, acc) => sum + Number(acc.currentBalance), 0) || 0,
     [accounts],
   );
 
