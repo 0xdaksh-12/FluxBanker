@@ -48,12 +48,12 @@ export const useApplyForLoan = () => {
 
   return useMutation({
     mutationFn: ({
-      principal,
+      principalAmount,
       termMonths,
     }: {
-      principal: number;
+      principalAmount: number;
       termMonths: number;
-    }) => applyForLoan(principal, termMonths),
+    }) => applyForLoan(principalAmount, termMonths),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
