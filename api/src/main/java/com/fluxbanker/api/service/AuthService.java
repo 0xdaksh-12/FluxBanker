@@ -254,11 +254,11 @@ public class AuthService {
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE, token)
                 .httpOnly(true)
                 .secure(isProduction)
-                .path("/auth")
+                .path("/")
                 .maxAge(Duration.ofMillis(refreshExpirationMs))
                 .sameSite(isProduction ? "None" : "Lax")
                 .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString() + (isProduction ? "; Partitioned" : ""));
     }
 
     /**
@@ -267,12 +267,15 @@ public class AuthService {
      * @param response HTTP response
      */
     public void clearRefreshCookie(HttpServletResponse response) {
+        boolean isProduction = "production".equalsIgnoreCase(nodeEnv);
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE, "")
                 .httpOnly(true)
-                .path("/auth")
+                .secure(isProduction)
+                .path("/")
                 .maxAge(0)
+                .sameSite(isProduction ? "None" : "Lax")
                 .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString() + (isProduction ? "; Partitioned" : ""));
     }
 
     /**
