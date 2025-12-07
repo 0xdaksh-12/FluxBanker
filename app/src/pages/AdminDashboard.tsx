@@ -5,7 +5,7 @@ import {
   useUpdateKycStatus,
 } from "../hooks/useAdmin";
 import { formatCurrency, formatDate } from "../lib/utils";
-import { PaginatedResponse, User, Transaction } from "../types";
+import type { PaginatedResponse, User, Transaction } from "../types";
 import { toast } from "sonner";
 import { Modal } from "../components/ui/Modal";
 import styles from "./AdminDashboard.module.css";
@@ -160,7 +160,8 @@ const AdminDashboard = () => {
                       </span>
                     </td>
                     <td>
-                      {user.role === "ADMIN" || user.kycStatus === "APPROVED" ? (
+                      {user.role === "ADMIN" ||
+                      user.kycStatus === "APPROVED" ? (
                         <span className="status-badge status-completed">
                           {user.role === "ADMIN" ? "AUTO-APPROVED" : "APPROVED"}
                         </span>
@@ -177,7 +178,10 @@ const AdminDashboard = () => {
                             }`}
                           >
                             {user.kycStatus || "PENDING"}
-                            <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>
+                            <span
+                              className="material-symbols-outlined"
+                              style={{ fontSize: "14px" }}
+                            >
                               edit
                             </span>
                           </span>

@@ -1,4 +1,4 @@
-import { Transaction } from "../../types";
+import type { Transaction } from "../../types";
 import { formatCurrency, formatDateTime } from "../../lib/utils";
 
 interface TransactionsTableProps {

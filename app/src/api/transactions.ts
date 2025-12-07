@@ -1,23 +1,23 @@
 import { apiClient } from "./client";
-import { Transaction, PaginatedResponse } from "../types";
+import type { Transaction, PaginatedResponse } from "../types";
 
 export const getTransactions = async (
   accountId: string,
   page = 0,
-  size = 20
+  size = 20,
 ): Promise<PaginatedResponse<Transaction>> => {
   const { data } = await apiClient.get<PaginatedResponse<Transaction>>(
-    `/transactions/account/${accountId}?page=${page}&size=${size}`
+    `/transactions/account/${accountId}?page=${page}&size=${size}`,
   );
   return data;
 };
 
 export const getUserTransactions = async (
   page = 0,
-  size = 20
+  size = 20,
 ): Promise<PaginatedResponse<Transaction>> => {
   const { data } = await apiClient.get<PaginatedResponse<Transaction>>(
-    `/transactions/user?page=${page}&size=${size}`
+    `/transactions/user?page=${page}&size=${size}`,
   );
   return data;
 };
