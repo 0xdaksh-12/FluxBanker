@@ -55,11 +55,7 @@ export const AccountsPage = () => {
     if (productType === "LOAN") {
       applyLoanMutation.mutate(
         {
-<<<<<<< main
           principalAmount: parseFloat(principal),
-=======
-          principal: parseFloat(principal),
->>>>>>> deploy
           termMonths: parseInt(termMonths, 10),
         },
         { onSuccess: onSuccessHandler },
