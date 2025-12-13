@@ -77,7 +77,7 @@ export const ResetPasswordPage = () => {
           <div style={{ textAlign: "center", padding: "2rem 0" }}>
             <div
               className="material-symbols-outlined"
-              style={{ fontSize: "64px", color: "var(--success)", marginBottom: "1rem" }}
+              style={{ fontSize: "64px", color: "var(--positive)", marginBottom: "1rem" }}
             >
               check_circle
             </div>
@@ -108,7 +108,7 @@ export const ResetPasswordPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="form-control"
+                  className="form-input"
                 />
               </div>
 
@@ -121,7 +121,7 @@ export const ResetPasswordPage = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="form-control"
+                  className="form-input"
                 />
               </div>
 
@@ -132,8 +132,8 @@ export const ResetPasswordPage = () => {
                   gap: "10px",
                   margin: "1rem 0",
                   padding: "0.75rem",
-                  background: "rgba(0,0,0,0.03)",
-                  borderRadius: "8px",
+                  background: "var(--bg-secondary, rgba(0,0,0,0.03))",
+                  border: "var(--bw) solid var(--border)",
                   cursor: "pointer"
                 }}
                 onClick={() => setSignOutAll(!signOutAll)}

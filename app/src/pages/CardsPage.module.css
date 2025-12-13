@@ -88,7 +88,7 @@
 .bankName {
   font-family: var(--sans);
   font-weight: 900;
-  font-size: 20px;
+  font-size: clamp(14px, 4.5vw, 20px);
   text-transform: uppercase;
   letter-spacing: -0.02em;
 }
@@ -135,7 +135,7 @@
 
 .cardNumber {
   font-family: var(--mono);
-  font-size: 22px;
+  font-size: clamp(13px, 5.2vw, 22px);
   font-weight: 700;
   letter-spacing: 2px;
   margin-top: auto;
@@ -173,7 +173,7 @@
 .value {
   font-family: var(--mono);
   font-weight: 700;
-  font-size: 14px;
+  font-size: clamp(10px, 3.2vw, 14px);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -235,3 +235,18 @@
   gap: var(--space-3);
   margin-top: var(--space-4);
 }
+
+@media (max-width: 480px) {
+  .cardFront,
+  .cardBack {
+    padding: var(--space-4);
+  }
+  .cardNumber {
+    margin-bottom: var(--space-3);
+  }
+  .chip {
+    width: 32px;
+    height: 22px;
+  }
+}
+

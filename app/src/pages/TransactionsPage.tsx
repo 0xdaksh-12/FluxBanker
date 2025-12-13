@@ -126,7 +126,7 @@ export const TransactionsPage = () => {
                     {account.name} (••{account.mask})
                   </span>
                   <span className="text-mono" style={{ fontSize: "13px" }}>
-                    ${account.currentBalance.toFixed(2)}
+                    ₹{account.currentBalance.toFixed(2)}
                   </span>
                 </button>
               ))}

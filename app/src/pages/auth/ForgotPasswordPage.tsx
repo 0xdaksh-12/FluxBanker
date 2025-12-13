@@ -57,7 +57,7 @@ export const ForgotPasswordPage = () => {
           <div style={{ textAlign: "center", padding: "2rem 0" }}>
             <div
               className="material-symbols-outlined"
-              style={{ fontSize: "64px", color: "var(--success)", marginBottom: "1rem" }}
+              style={{ fontSize: "64px", color: "var(--positive)", marginBottom: "1rem" }}
             >
               check_circle
             </div>

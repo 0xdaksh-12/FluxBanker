@@ -38,13 +38,31 @@ export const VerifyEmailPage = () => {
   }, [token, status]);
 
   return (
-    <div className="page-container" style={{ justifyContent: "center", minHeight: "100vh" }}>
-      <div className="card" style={{ maxWidth: "400px", width: "100%", padding: "2rem", textAlign: "center" }}>
-        <h2 style={{ marginBottom: "1rem" }}>Email Verification</h2>
+    <div className="auth-page">
+      <div className="auth-card" style={{ maxWidth: "450px" }}>
+        <div className="auth-header">
+          <img
+            src="/user-logo.jpeg"
+            alt="Logo"
+            style={{ width: 48, height: 48, marginBottom: "1rem" }}
+          />
+          <h1>Email Verification</h1>
+          <p>Verifying your premium FluxBanker credentials</p>
+        </div>
         
         {status === "loading" && (
-          <div>
-            <div className="spinner" style={{ margin: "0 auto 1rem", width: "40px", height: "40px", border: "4px solid var(--border-color)", borderTop: "4px solid var(--primary-color)", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+          <div style={{ textAlign: "center", padding: "2rem 0" }}>
+            <div 
+              className="spinner" 
+              style={{ 
+                margin: "0 auto 1.5rem", 
+                width: "40px", 
+                height: "40px", 
+                border: "var(--bw-thick) solid var(--border-light)", 
+                borderTop: "var(--bw-thick) solid var(--ink)", 
+                animation: "spin 1s linear infinite" 
+              }} 
+            />
             <p className="text-muted">Verifying your email address...</p>
             <style>
               {`
@@ -58,9 +76,14 @@ export const VerifyEmailPage = () => {
         )}
 
         {status === "success" && (
-          <div>
-            <div style={{ color: "var(--success-color)", fontSize: "3rem", marginBottom: "1rem" }}>✓</div>
-            <p style={{ marginBottom: "1.5rem" }}>
+          <div style={{ textAlign: "center", padding: "2rem 0" }}>
+            <div 
+              className="material-symbols-outlined" 
+              style={{ fontSize: "64px", color: "var(--positive)", marginBottom: "1.5rem" }}
+            >
+              check_circle
+            </div>
+            <p style={{ marginBottom: "1.5rem", fontSize: "14px" }}>
               Your email has been successfully verified! Your account is now fully active.
             </p>
             <button
@@ -74,12 +97,21 @@ export const VerifyEmailPage = () => {
         )}
 
         {status === "error" && (
-          <div>
-            <div style={{ color: "var(--danger-color)", fontSize: "3rem", marginBottom: "1rem" }}>✗</div>
-            <p className="text-danger" style={{ marginBottom: "1.5rem", fontWeight: 500 }}>
+          <div style={{ textAlign: "center", padding: "2rem 0" }}>
+            <div 
+              className="material-symbols-outlined" 
+              style={{ fontSize: "64px", color: "var(--negative)", marginBottom: "1.5rem" }}
+            >
+              cancel
+            </div>
+            <p style={{ marginBottom: "1.5rem", fontWeight: 700, fontSize: "14px" }}>
               {errorMsg}
             </p>
-            <Link to="/login" className="btn btn-outline" style={{ display: "block", width: "100%", textAlign: "center" }}>
+            <Link 
+              to="/login" 
+              className="btn btn-outline" 
+              style={{ display: "block", width: "100%", textAlign: "center" }}
+            >
               Return to Login
             </Link>
           </div>

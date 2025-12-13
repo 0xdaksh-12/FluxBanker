@@ -18,6 +18,12 @@
   .form {
     grid-template-columns: 1fr;
   }
+  
+  .form button[type="submit"] {
+    width: 100%;
+    align-self: stretch !important;
+    margin-bottom: 0 !important;
+  }
 }
 
 .form .form-group {
