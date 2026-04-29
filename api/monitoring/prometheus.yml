@@ -1,0 +1,9 @@
+# Prometheus Configuration
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "fluxbanker-api"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["fluxbanker-api:8080"]
