@@ -1,0 +1,20 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.submitBtn {
+  width: 100%;
+  justify-content: center;
+  padding: 14px 20px;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  margin-top: 4px;
+}
+
+.googleBtn {
+  width: 100%;
+  justify-content: center;
+  padding: 12px 20px;
+}
