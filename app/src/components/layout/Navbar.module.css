@@ -1,0 +1,166 @@
+.navbar {
+  display: flex;
+  align-items: stretch;
+  border-bottom: var(--border-width) solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 60px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 24px;
+  border-right: var(--border-width) solid var(--border);
+  flex-shrink: 0;
+}
+
+.brandLogo {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.brandName {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-h);
+}
+
+.links {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border);
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  white-space: nowrap;
+}
+
+.link .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.link:hover {
+  background: var(--bg-secondary);
+  color: var(--text-h);
+}
+
+.linkActive {
+  background: var(--text-h);
+  color: var(--bg);
+}
+
+.linkActive:hover {
+  background: var(--text-h);
+  color: var(--bg);
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  margin-left: auto;
+  border-left: var(--border-width) solid var(--border);
+  flex-shrink: 0;
+}
+
+.userLabel {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.logoutBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: var(--border-width) solid var(--border);
+  padding: 6px;
+  cursor: pointer;
+  color: var(--text-h);
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.logoutBtn:hover {
+  background: var(--text-h);
+  color: var(--bg);
+}
+
+.logoutBtn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.themeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: var(--bw) solid var(--border);
+  padding: 6px;
+  cursor: pointer;
+  color: var(--ink);
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.themeBtn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.themeBtn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  .brandName {
+    display: none;
+  }
+
+  .link span.material-symbols-outlined {
+    font-size: 20px;
+  }
+
+  .link {
+    padding: 0 12px;
+    font-size: 0;
+    gap: 0;
+  }
+
+  .link .material-symbols-outlined {
+    font-size: 20px;
+  }
+
+  .userLabel {
+    display: none;
+  }
+}
