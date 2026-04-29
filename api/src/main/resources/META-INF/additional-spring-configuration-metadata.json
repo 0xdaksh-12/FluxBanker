@@ -1,0 +1,39 @@
+{
+  "properties": [
+    {
+      "name": "jwt.secret.access",
+      "type": "java.lang.String",
+      "description": "Base64-encoded secret key used to sign access tokens."
+    },
+    {
+      "name": "jwt.secret.refresh",
+      "type": "java.lang.String",
+      "description": "Base64-encoded secret key used to sign refresh tokens."
+    },
+    {
+      "name": "jwt.expiration-ms",
+      "type": "java.lang.Long",
+      "description": "Access token expiration time in milliseconds."
+    },
+    {
+      "name": "jwt.refresh-expiration-ms",
+      "type": "java.lang.Long",
+      "description": "Refresh token expiration time in milliseconds."
+    },
+    {
+      "name": "app.node-env",
+      "type": "java.lang.String",
+      "description": "Active environment: 'development' or 'production'. Controls cookie secure/sameSite flags."
+    },
+    {
+      "name": "app.client-url",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of allowed CORS origins."
+    },
+    {
+      "name": "app.admin-emails",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of email addresses automatically granted ADMIN role on registration."
+    }
+  ]
+}
