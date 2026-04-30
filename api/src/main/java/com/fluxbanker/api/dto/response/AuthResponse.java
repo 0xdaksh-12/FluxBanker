@@ -11,7 +11,7 @@ import lombok.ToString;
  */
 @Getter
 @Builder
-@ToString(exclude = "token")
+@ToString(exclude = {"token", "user"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthResponse {
     private final boolean success;
