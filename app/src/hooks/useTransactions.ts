@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
-import { getTransactions, transferMoney } from "../api/transactions";
+import { getTransactions, getUserTransactions, transferMoney } from "../api/transactions";
 import { useAuthStore } from "../store/authStore";
 
 /**
@@ -18,6 +18,17 @@ export const useTransactions = (accountId: string | null, page = 0, size = 20) =
     queryKey: ["transactions", accountId, page, size],
     queryFn: () => getTransactions(accountId!, page, size),
     enabled: isAuthenticated && !!accountId,
+    placeholderData: keepPreviousData,
+  });
+};
+
+export const useUserTransactions = (page = 0, size = 20) => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery({
+    queryKey: ["transactions", "user", page, size],
+    queryFn: () => getUserTransactions(page, size),
+    enabled: isAuthenticated,
     placeholderData: keepPreviousData,
   });
 };
