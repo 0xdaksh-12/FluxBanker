@@ -61,4 +61,38 @@ public class UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    /**
+     * Updates user details.
+     */
+    public User updateUser(UUID id, com.fluxbanker.api.dto.request.UserUpdateRequest request) {
+        User user = getUserById(id);
+        if (request.getFirstName() != null) user.setFirstName(request.getFirstName());
+        if (request.getLastName() != null) user.setLastName(request.getLastName());
+        if (request.getAddress1() != null) user.setAddress1(request.getAddress1());
+        if (request.getCity() != null) user.setCity(request.getCity());
+        if (request.getState() != null) user.setState(request.getState());
+        if (request.getPinCode() != null) user.setPinCode(request.getPinCode());
+        if (request.getDateOfBirth() != null) user.setDateOfBirth(request.getDateOfBirth());
+        if (request.getProfilePic() != null) user.setProfilePic(request.getProfilePic());
+        return userRepository.save(user);
+    }
+
+    /**
+     * Simulates sending a password reset email.
+     */
+    public void requestPasswordReset(UUID userId) {
+        User user = getUserById(userId);
+        // In a real app, generate token and send email
+        System.out.println("Simulated: Password reset link sent to " + user.getEmail());
+    }
+
+    /**
+     * Verifies user email.
+     */
+    public User verifyEmail(UUID id) {
+        User user = getUserById(id);
+        user.setEmailVerified(true);
+        return userRepository.save(user);
+    }
 }
