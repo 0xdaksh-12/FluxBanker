@@ -16,6 +16,8 @@ interface CustomSelectProps {
   placeholder?: string;
   className?: string;
   showDescriptionInTrigger?: boolean;
+  disabled?: boolean;
+  compact?: boolean;
 }
 
 export const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -26,6 +28,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   placeholder = "Select an option",
   className = "",
   showDescriptionInTrigger = false,
+  disabled = false,
+  compact = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -50,18 +54,26 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
       <div className={styles.wrapper}>
         <button
           type="button"
-          className={`form-input ${styles.trigger}`}
-          onClick={() => setIsOpen(!isOpen)}
+          className={`form-input ${styles.trigger} ${compact ? styles.compact : ""}`}
+          onClick={() => !disabled && setIsOpen(!isOpen)}
+          disabled={disabled}
         >
           <div className={selectedOption ? "" : styles.placeholder}>
             {selectedOption ? (
               <div className={styles.triggerContent}>
-                <span className={styles.triggerLabel}>{selectedOption.label}</span>
+                <span className={styles.triggerLabel}>
+                  {selectedOption.label}
+                </span>
                 {showDescriptionInTrigger && selectedOption.description && (
-                  <span className={styles.triggerDescription}> ({selectedOption.description})</span>
+                  <span className={styles.triggerDescription}>
+                    {" "}
+                    ({selectedOption.description})
+                  </span>
                 )}
               </div>
-            ) : placeholder}
+            ) : (
+              placeholder
+            )}
           </div>
           <span className="material-symbols-outlined">
             {isOpen ? "expand_less" : "expand_more"}
@@ -98,7 +110,12 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   )}
                 </div>
                 {value === option.value && (
-                  <span className="material-symbols-outlined" style={{ fontSize: '18px', marginLeft: '8px' }}>check</span>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: "18px", marginLeft: "8px" }}
+                  >
+                    check
+                  </span>
                 )}
               </button>
             ))}

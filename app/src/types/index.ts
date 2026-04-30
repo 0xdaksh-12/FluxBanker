@@ -12,6 +12,7 @@ export interface User {
   dateOfBirth?: string;
   aadhaar?: string;
   isEmailVerified: boolean;
+  kycStatus: "PENDING" | "APPROVED" | "REJECTED";
 }
 
 export interface AuthResponse {
@@ -27,6 +28,27 @@ export interface Account {
   availableBalance: number;
   type: "DEPOSITORY" | "CREDIT" | "LOAN" | "INVESTMENT";
   subtype: "CHECKING" | "SAVINGS" | "CREDIT_CARD" | "MONEY_MARKET";
+  loanDetails?: {
+    principal: number;
+    interestRate: number;
+    termMonths: number;
+    monthlyPayment: number;
+  };
+  creditDetails?: {
+    creditLimit: number;
+    statementBalance: number;
+    apr: number;
+  };
+}
+
+export interface Card {
+  id: string;
+  cardNumber: string; // Masked PAN
+  cvv: string;
+  expiryDate: string;
+  status: "ACTIVE" | "FROZEN" | "CANCELLED";
+  type: "PHYSICAL" | "VIRTUAL";
+  subtype: "DEBIT" | "CREDIT";
 }
 
 export interface Transaction {
