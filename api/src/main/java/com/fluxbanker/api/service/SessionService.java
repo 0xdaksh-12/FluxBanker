@@ -66,6 +66,15 @@ public class SessionService {
     }
 
     /**
+     * Invalidates all active sessions for a specific user.
+     *
+     * @param userId the user's UUID
+     */
+    public void invalidateAllUserSessions(UUID userId) {
+        sessionRepository.invalidateAllByUserId(userId);
+    }
+
+    /**
      * Retrieves a session by ID without validation.
      *
      * @param sessionId the session's UUID

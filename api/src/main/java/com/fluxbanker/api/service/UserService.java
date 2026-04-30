@@ -1,7 +1,9 @@
 package com.fluxbanker.api.service;
 
+import com.fluxbanker.api.entity.EmailVerificationToken;
 import com.fluxbanker.api.entity.User;
 import com.fluxbanker.api.exception.NotFoundException;
+import com.fluxbanker.api.repository.EmailVerificationTokenRepository;
 import com.fluxbanker.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
 
     /**
      * Persists a new user.
@@ -67,32 +71,79 @@ public class UserService {
      */
     public User updateUser(UUID id, com.fluxbanker.api.dto.request.UserUpdateRequest request) {
         User user = getUserById(id);
-        if (request.getFirstName() != null) user.setFirstName(request.getFirstName());
-        if (request.getLastName() != null) user.setLastName(request.getLastName());
-        if (request.getAddress1() != null) user.setAddress1(request.getAddress1());
-        if (request.getCity() != null) user.setCity(request.getCity());
-        if (request.getState() != null) user.setState(request.getState());
-        if (request.getPinCode() != null) user.setPinCode(request.getPinCode());
-        if (request.getDateOfBirth() != null) user.setDateOfBirth(request.getDateOfBirth());
-        if (request.getProfilePic() != null) user.setProfilePic(request.getProfilePic());
+        if (request.getFirstName() != null)
+            user.setFirstName(request.getFirstName());
+        if (request.getLastName() != null)
+            user.setLastName(request.getLastName());
+        if (request.getAddress1() != null)
+            user.setAddress1(request.getAddress1());
+        if (request.getCity() != null)
+            user.setCity(request.getCity());
+        if (request.getState() != null)
+            user.setState(request.getState());
+        if (request.getPinCode() != null)
+            user.setPinCode(request.getPinCode());
+        if (request.getDateOfBirth() != null)
+            user.setDateOfBirth(request.getDateOfBirth());
+        if (request.getProfilePic() != null)
+            user.setProfilePic(request.getProfilePic());
         return userRepository.save(user);
     }
 
     /**
-     * Simulates sending a password reset email.
+     * Saves a user entity directly.
      */
-    public void requestPasswordReset(UUID userId) {
-        User user = getUserById(userId);
-        // In a real app, generate token and send email
-        System.out.println("Simulated: Password reset link sent to " + user.getEmail());
+    public User saveUser(User user) {
+        return userRepository.save(user);
     }
 
     /**
-     * Verifies user email.
+     * Sends a verification email to the user.
      */
-    public User verifyEmail(UUID id) {
+    @org.springframework.transaction.annotation.Transactional
+    public User sendVerificationEmail(UUID id) {
         User user = getUserById(id);
+
+        emailVerificationTokenRepository.deleteByUser(user);
+
+        String tokenString = UUID.randomUUID().toString();
+        EmailVerificationToken verificationToken = EmailVerificationToken.builder()
+                .token(tokenString)
+                .user(user)
+                .expiryDate(java.time.Instant.now().plus(java.time.Duration.ofHours(24)))
+                .build();
+        emailVerificationTokenRepository.save(verificationToken);
+
+        emailService.sendVerificationEmail(user.getEmail(), user.getFirstName(), tokenString);
+        return user;
+    }
+
+    /**
+     * Verifies the user's email using the provided token.
+     */
+    @org.springframework.transaction.annotation.Transactional
+    public void verifyEmailToken(String token) {
+        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid verification token"));
+
+        if (verificationToken.isInvalid()) {
+            throw new IllegalArgumentException("Token is invalid or expired");
+        }
+
+        User user = verificationToken.getUser();
         user.setEmailVerified(true);
+        userRepository.save(user);
+
+        verificationToken.setUsed(true);
+        emailVerificationTokenRepository.save(verificationToken);
+    }
+
+    /**
+     * Updates KYC status for a user.
+     */
+    public User updateKycStatus(UUID id, User.KycStatus status) {
+        User user = getUserById(id);
+        user.setKycStatus(status);
         return userRepository.save(user);
     }
 }
