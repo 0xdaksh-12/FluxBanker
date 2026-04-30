@@ -3,6 +3,7 @@ package com.fluxbanker.api.exception;
 import com.fluxbanker.api.dto.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 
 /**
- * Global exception handler — mirrors Node's errorHandler middleware.
+ * Global exception handler.
  * All responses follow the { success, message, errors? } contract.
  */
 @RestControllerAdvice
@@ -63,6 +64,24 @@ public class GlobalExceptionHandler {
             .success(false)
             .message("Request validation failed")
             .errors(fieldErrors)
+            .build());
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+        ErrorResponse.builder()
+            .success(false)
+            .message("Access denied")
+            .build());
+  }
+
+  @ExceptionHandler(ForbiddenException.class)
+  public ResponseEntity<ErrorResponse> handleForbidden(ForbiddenException ex) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+        ErrorResponse.builder()
+            .success(false)
+            .message(ex.getMessage())
             .build());
   }
 

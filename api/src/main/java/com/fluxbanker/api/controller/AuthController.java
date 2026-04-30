@@ -3,7 +3,10 @@ package com.fluxbanker.api.controller;
 import com.fluxbanker.api.dto.request.LoginRequest;
 import com.fluxbanker.api.dto.request.RegisterRequest;
 import com.fluxbanker.api.dto.response.AuthResponse;
+import com.fluxbanker.api.dto.response.UserResponse;
+import com.fluxbanker.api.entity.User;
 import com.fluxbanker.api.service.AuthService;
+import com.fluxbanker.api.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -17,7 +20,7 @@ import java.util.UUID;
 
 /**
  * Auth REST controller — exposes the same endpoints as the Node authRoutes.js.
- * Response shape matches: { success, message, token, name }
+ * Response shape matches: { success, message, accessToken, name, user? }
  */
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -25,22 +28,22 @@ import java.util.UUID;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserService userService;
 
     /** POST /auth/register */
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request,
             HttpServletRequest req,
             HttpServletResponse res) {
-        // getUserByEmail is called inside register to get the name — we re-fetch after
-        // creation
-        // AuthService returns the accessToken; user name is in the request body
         String accessToken = authService.register(request, req, res);
+        User createdUser = userService.getUserByEmail(request.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 AuthResponse.builder()
                         .success(true)
                         .message("User registered successfully")
                         .token(accessToken)
                         .name(request.getFirstName() + " " + request.getLastName())
+                        .user(UserResponse.fromEntity(createdUser))
                         .build());
     }
 
@@ -74,7 +77,7 @@ public class AuthController {
         if (accessToken == null) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(
+        return ResponseEntity.ok(
                 AuthResponse.builder()
                         .success(true)
                         .message("Token refreshed successfully")
