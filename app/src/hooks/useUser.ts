@@ -1,5 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateProfile, verifyEmail, requestPasswordReset } from "../api/users";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  updateProfile,
+  verifyEmail,
+  requestPasswordReset,
+  getMe,
+} from "../api/users";
 import { useAuthStore } from "../store/authStore";
 import { User } from "../types";
 
@@ -39,5 +44,13 @@ export const useVerifyEmail = () => {
 export const useRequestPasswordReset = () => {
   return useMutation({
     mutationFn: () => requestPasswordReset(),
+  });
+};
+
+export const useMe = (enabled = true) => {
+  return useQuery({
+    queryKey: ["user", "me"],
+    queryFn: getMe,
+    enabled,
   });
 };

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAccounts, createAccount, depositFunds } from "../api/accounts";
+import { getAccounts, createAccount, depositFunds, applyForLoan, openCreditCard } from "../api/accounts";
 import { useAuthStore } from "../store/authStore";
 import { Account } from "../types";
 
@@ -31,6 +31,30 @@ export const useCreateAccount = () => {
   return useMutation({
     mutationFn: ({ name, subtype }: Pick<Account, "name" | "subtype">) =>
       createAccount(name, subtype),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
+    },
+  });
+};
+
+export const useApplyForLoan = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ principal, termMonths }: { principal: number; termMonths: number }) =>
+      applyForLoan(principal, termMonths),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
+    },
+  });
+};
+
+export const useOpenCreditCard = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ creditLimit }: { creditLimit: number }) =>
+      openCreditCard(creditLimit),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },

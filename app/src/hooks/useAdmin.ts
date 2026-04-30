@@ -1,5 +1,10 @@
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { getAllUsers, getAllTransactions } from "../api/admin";
+import {
+  useQuery,
+  keepPreviousData,
+  useQueryClient,
+  useMutation,
+} from "@tanstack/react-query";
+import { getAllUsers, getAllTransactions, updateKycStatus } from "../api/admin";
 import { useAuthStore } from "../store/authStore";
 
 export const useAllUsers = (page = 0, size = 10) => {
@@ -23,5 +28,22 @@ export const useAllTransactions = (page = 0, size = 50) => {
     queryFn: () => getAllTransactions(page, size),
     enabled: isAdmin,
     placeholderData: keepPreviousData,
+  });
+};
+
+export const useUpdateKycStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      userId,
+      status,
+    }: {
+      userId: string;
+      status: "PENDING" | "APPROVED" | "REJECTED";
+    }) => updateKycStatus(userId, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+    },
   });
 };

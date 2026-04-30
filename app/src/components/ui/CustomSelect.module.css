@@ -24,6 +24,20 @@
 .trigger:hover {
   border-color: var(--ink);
 }
+.compact {
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+  min-height: 28px !important;
+  width: auto !important;
+  min-width: 110px;
+}
+.compact .triggerLabel {
+  font-weight: 600;
+  font-size: 11px;
+}
+.compact .material-symbols-outlined {
+  font-size: 16px !important;
+}
 
 .triggerContent {
   display: flex;
@@ -58,6 +72,10 @@
   overflow-y: auto;
   padding: 4px;
   animation: slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.compact + .dropdown {
+  min-width: 120px;
+  width: max-content;
 }
 
 @keyframes slideIn {
