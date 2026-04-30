@@ -1,7 +1,13 @@
 import { useState } from "react";
-import { useAllUsers, useAllTransactions } from "../hooks/useAdmin";
+import {
+  useAllUsers,
+  useAllTransactions,
+  useUpdateKycStatus,
+} from "../hooks/useAdmin";
 import { formatCurrency, formatDate } from "../lib/utils";
 import { PaginatedResponse, User, Transaction } from "../types";
+import { toast } from "sonner";
+import { Modal } from "../components/ui/Modal";
 import styles from "./AdminDashboard.module.css";
 
 const AdminDashboard = () => {
@@ -9,6 +15,7 @@ const AdminDashboard = () => {
   const [txSize, setTxSize] = useState(10);
   const [userPage, setUserPage] = useState(0);
   const [userSize, setUserSize] = useState(10);
+  const [selectedKycUser, setSelectedKycUser] = useState<User | null>(null);
 
   const { data: usersData, isLoading: usersLoading } = useAllUsers(
     userPage,
@@ -18,6 +25,7 @@ const AdminDashboard = () => {
     txPage,
     txSize,
   );
+  const updateKycMutation = useUpdateKycStatus();
 
   if (usersLoading || txLoading) {
     return (
@@ -59,6 +67,19 @@ const AdminDashboard = () => {
   };
   const handlePrevUser = () => {
     if (!isUserFirstPage) setUserPage((p) => p - 1);
+  };
+
+  const handleKycChange = (
+    userId: string,
+    newStatus: "APPROVED" | "REJECTED" | "PENDING",
+  ) => {
+    updateKycMutation.mutate(
+      { userId, status: newStatus },
+      {
+        onSuccess: () => toast.success(`KYC status updated to ${newStatus}`),
+        onError: () => toast.error("Failed to update KYC status"),
+      },
+    );
   };
 
   return (
@@ -116,13 +137,14 @@ const AdminDashboard = () => {
               </div>
             </div>
           </div>
-          <div style={{ overflowX: "auto" }}>
+          <div className={styles.tableWrapper}>
             <table className="data-table">
               <thead>
                 <tr>
                   <th>Name</th>
                   <th>Email</th>
                   <th>Role</th>
+                  <th>KYC Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -137,11 +159,36 @@ const AdminDashboard = () => {
                         {user.role}
                       </span>
                     </td>
+                    <td>
+                      {user.role === "ADMIN" || user.kycStatus === "APPROVED" ? (
+                        <span className="status-badge status-completed">
+                          {user.role === "ADMIN" ? "AUTO-APPROVED" : "APPROVED"}
+                        </span>
+                      ) : (
+                        <button
+                          className={styles.statusTrigger}
+                          onClick={() => setSelectedKycUser(user)}
+                        >
+                          <span
+                            className={`status-badge ${
+                              user.kycStatus === "REJECTED"
+                                ? "status-failed"
+                                : "status-pending"
+                            }`}
+                          >
+                            {user.kycStatus || "PENDING"}
+                            <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>
+                              edit
+                            </span>
+                          </span>
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))}
                 {!users?.length && (
                   <tr>
-                    <td colSpan={3} style={{ textAlign: "center" }}>
+                    <td colSpan={4} style={{ textAlign: "center" }}>
                       No users found.
                     </td>
                   </tr>
@@ -242,6 +289,70 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={!!selectedKycUser}
+        onClose={() => setSelectedKycUser(null)}
+        title="Update KYC Status"
+      >
+        {selectedKycUser && (
+          <div className={styles.modalContent}>
+            <div className={styles.userInfo}>
+              <p className="form-label">Update Verification For</p>
+              <h3 style={{ margin: "4px 0" }}>
+                {selectedKycUser.firstName} {selectedKycUser.lastName}
+              </h3>
+              <p className="text-muted" style={{ fontSize: "12px" }}>
+                {selectedKycUser.email}
+              </p>
+            </div>
+
+            <div className={styles.statusOptions}>
+              <button
+                className={`${styles.optionBtn} ${styles.approved}`}
+                onClick={() => {
+                  handleKycChange(selectedKycUser.id, "APPROVED");
+                  setSelectedKycUser(null);
+                }}
+                disabled={updateKycMutation.isPending}
+              >
+                <span className="material-symbols-outlined">check_circle</span>
+                APPROVE USER
+              </button>
+              <button
+                className={`${styles.optionBtn} ${styles.rejected}`}
+                onClick={() => {
+                  handleKycChange(selectedKycUser.id, "REJECTED");
+                  setSelectedKycUser(null);
+                }}
+                disabled={updateKycMutation.isPending}
+              >
+                <span className="material-symbols-outlined">cancel</span>
+                REJECT USER
+              </button>
+              <button
+                className={`${styles.optionBtn} ${styles.pending}`}
+                onClick={() => {
+                  handleKycChange(selectedKycUser.id, "PENDING");
+                  setSelectedKycUser(null);
+                }}
+                disabled={updateKycMutation.isPending}
+              >
+                <span className="material-symbols-outlined">schedule</span>
+                RESET TO PENDING
+              </button>
+            </div>
+
+            <button
+              className="btn btn-outline"
+              style={{ width: "100%", marginTop: "24px" }}
+              onClick={() => setSelectedKycUser(null)}
+            >
+              CANCEL
+            </button>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };
