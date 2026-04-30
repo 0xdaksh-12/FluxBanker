@@ -2,9 +2,9 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [main, deploy]
   pull_request:
-    branches: [main]
+    branches: [main, deploy]
 
 jobs:
   backend:
@@ -64,10 +64,8 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: postgres
           REDIS_HOST: localhost
           KAFKA_BOOTSTRAP_SERVERS: localhost:9092
-          JWT_SECRET_ACCESS: bXktc3VwZXItc2VjcmV0LWtleS10aGF0LWlzLWF0LWxlYXN0LTMyLWJ5dGVzLWxvbmctZm9yLWp3dA==
-          JWT_SECRET_REFRESH: bXktc3VwZXItc2VjcmV0LWtleS10aGF0LWlzLWF0LWxlYXN0LTMyLWJ5dGVzLWxvbmctZm9yLWp3dA==
-          GOOGLE_CLIENT_ID: mock-client-id
-          GOOGLE_CLIENT_SECRET: mock-client-secret
+          JWT_SECRET_ACCESS: ${{ secrets.JWT_SECRET_ACCESS }}
+          JWT_SECRET_REFRESH: ${{ secrets.JWT_SECRET_REFRESH }}
 
   frontend:
     runs-on: ubuntu-latest
