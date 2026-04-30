@@ -160,9 +160,21 @@ services:
     depends_on:
       - prometheus
 
+  mailpit:
+    image: axllent/mailpit
+    container_name: fluxbanker-mailpit
+    ports:
+      - "8025:8025" # Web UI
+      - "1025:1025" # SMTP Port
+    volumes:
+      - mailpit_data:/data
+    environment:
+      MP_DATA_FILE: /data/mailpit.db
+
 volumes:
   postgres_data:
   redis_data:
   prometheus_data:
   grafana_data:
   kafka_data:
+  mailpit_data:
