@@ -118,7 +118,9 @@ public class TransactionService {
                 .amount(amount.negate())
                 .type(Transaction.Type.TRANSFER)
                 .status(Transaction.Status.PENDING) // External transfers start as PENDING
-                .category("External Transfer to " + recipientName + " (" + maskExternalAccount(accountNumber) + ")")
+                .category("External Transfer to " + recipientName
+                        + " (acct " + maskExternalAccount(accountNumber)
+                        + ", rtg ****" + routingNumber.substring(Math.max(0, routingNumber.length() - 4)) + ")")
                 .counterpartyName(recipientName)
                 .build();
         transactionRepository.save(debitTx);
