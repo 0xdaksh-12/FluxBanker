@@ -13,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "user")
 public class Account {
 
     @Id
@@ -45,6 +46,12 @@ public class Account {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Subtype subtype;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private CreditDetails creditDetails;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private LoanDetails loanDetails;
 
     public enum Type {
         DEPOSITORY, CREDIT, LOAN, INVESTMENT
