@@ -22,11 +22,10 @@ import java.util.List;
 
 /**
  * Spring Security configuration — stateless JWT-based auth.
- * Mirrors Node's app.js cors setup and authenticationHandler middleware
- * placement.
  */
 @Configuration
 @EnableWebSecurity
+@org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -44,11 +43,13 @@ public class SecurityConfig {
         .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers(HttpMethod.GET, "/", "/api/v1/health", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/", "/api/v1/health", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**")
+            .permitAll()
             .requestMatchers(HttpMethod.POST,
                 "/api/v1/auth/register",
                 "/api/v1/auth/login",
-                "/api/v1/auth/refresh").permitAll()
+                "/api/v1/auth/refresh")
+            .permitAll()
             .anyRequest().authenticated())
 
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

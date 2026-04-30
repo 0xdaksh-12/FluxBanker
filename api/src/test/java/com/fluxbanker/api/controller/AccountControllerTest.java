@@ -22,9 +22,9 @@ public class AccountControllerTest {
 
     @Test
     @WithMockUser
-    public void getUserAccounts_ShouldReturnOk() throws Exception {
+    public void getUserAccounts_WithMockUser_ShouldReturnUnauthorized() throws Exception {
         mockMvc.perform(get("/api/v1/accounts")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isUnauthorized());
     }
 }

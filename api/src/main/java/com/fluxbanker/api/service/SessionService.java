@@ -34,8 +34,8 @@ public class SessionService {
     public Session createSession(User user, String userAgent, String ip) {
         Session session = Session.builder()
                 .user(user)
-                .userAgent(userAgent)
-                .ip(ip)
+                .userAgent(userAgent != null ? userAgent : "Unknown")
+                .ip(ip != null ? ip : "Unknown")
                 .valid(true)
                 .expiresAt(java.time.Instant.now().plusMillis(604800000)) // 7 days
                 .build();

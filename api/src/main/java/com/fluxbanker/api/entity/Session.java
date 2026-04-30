@@ -7,7 +7,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.Instant;
 import java.util.UUID;
 
-/** JPA entity representing an authenticated user session. Mirrors Node's Session Mongoose model. */
+/**
+ * JPA entity representing an authenticated user session. Mirrors Node's Session
+ * Mongoose model.
+ */
 @Entity
 @Table(name = "sessions")
 @Getter
@@ -21,7 +24,10 @@ public class Session {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    /** Lazily-loaded user reference — mirrors Mongoose's { ref: 'User' } without auto-population. */
+    /**
+     * Lazily-loaded user reference — mirrors Mongoose's { ref: 'User' } without
+     * auto-population.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -30,10 +36,10 @@ public class Session {
     @Builder.Default
     private boolean valid = true;
 
-    @Column(name = "user_agent", nullable = false)
+    @Column(name = "user_agent")
     private String userAgent;
 
-    @Column(name = "ip_address", nullable = false)
+    @Column(name = "ip_address")
     private String ip;
 
     /** BCrypt-hashed refresh token, set after session creation. */
