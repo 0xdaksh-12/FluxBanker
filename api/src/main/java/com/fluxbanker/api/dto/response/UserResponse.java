@@ -4,24 +4,30 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fluxbanker.api.entity.User;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Getter
+@Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserResponse {
-    private final String id;
-    private final String firstName;
-    private final String lastName;
-    private final String address1;
-    private final String city;
-    private final String state;
-    private final String pinCode;
-    private final String dateOfBirth;
-    private final String aadhaar;
-    private final String email;
-    private final String profilePic;
-    private final String role;
-    private final boolean isEmailVerified;
+    private String id;
+    private String firstName;
+    private String lastName;
+    private String address1;
+    private String city;
+    private String state;
+    private String pinCode;
+    private String dateOfBirth;
+    private String aadhaar;
+    private String email;
+    private String profilePic;
+    private String role;
+    private boolean isEmailVerified;
 
     public static UserResponse fromEntity(User user) {
         return UserResponse.builder()

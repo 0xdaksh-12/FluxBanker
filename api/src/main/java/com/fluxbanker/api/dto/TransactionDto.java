@@ -1,8 +1,11 @@
 package com.fluxbanker.api.dto;
 
 import com.fluxbanker.api.entity.Transaction;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -10,7 +13,10 @@ import java.util.UUID;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransactionDto {
+
     private UUID id;
     private UUID accountId;
     private BigDecimal amount;
