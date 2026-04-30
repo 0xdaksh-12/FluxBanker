@@ -34,21 +34,30 @@ public class TransactionController {
         return ResponseEntity.ok(transactions);
     }
 
+    @GetMapping("/user")
+    public ResponseEntity<Page<TransactionDto>> getUserTransactions(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PageableDefault(size = 20) Pageable pageable) {
+        Page<TransactionDto> transactions = transactionService.getTransactionsForUser(userDetails.getUserId(),
+                pageable);
+        return ResponseEntity.ok(transactions);
+    }
+
     @PostMapping("/transfer")
     public ResponseEntity<Map<String, String>> transferMoney(
             @RequestBody Map<String, Object> request,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        
+
         UUID sourceAccountId = UUID.fromString(request.get("sourceAccountId").toString());
         UUID destinationAccountId = UUID.fromString(request.get("destinationAccountId").toString());
         BigDecimal amount = new BigDecimal(request.get("amount").toString());
 
         transactionService.validateAccountOwnership(sourceAccountId, userDetails.getUserId());
         transactionService.transferMoney(sourceAccountId, destinationAccountId, amount);
-        
+
         // Evict cache as balances changed
         accountService.evictUserAccountsCache(userDetails.getUserId());
-        
+
         return ResponseEntity.ok(Map.of("status", "Transfer successful"));
     }
 }

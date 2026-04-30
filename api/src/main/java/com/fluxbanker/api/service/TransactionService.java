@@ -40,6 +40,12 @@ public class TransactionService {
                 .map(this::mapToDto);
     }
 
+    @Transactional(readOnly = true)
+    public Page<TransactionDto> getTransactionsForUser(UUID userId, Pageable pageable) {
+        return transactionRepository.findByAccountUserIdOrderByTimestampDesc(userId, pageable)
+                .map(this::mapToDto);
+    }
+
     @Transactional
     public void transferMoney(UUID sourceAccountId, UUID destinationAccountId, BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
