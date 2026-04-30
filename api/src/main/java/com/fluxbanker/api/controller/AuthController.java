@@ -1,7 +1,9 @@
 package com.fluxbanker.api.controller;
 
+import com.fluxbanker.api.dto.request.ForgotPasswordRequest;
 import com.fluxbanker.api.dto.request.LoginRequest;
 import com.fluxbanker.api.dto.request.RegisterRequest;
+import com.fluxbanker.api.dto.request.ResetPasswordRequest;
 import com.fluxbanker.api.dto.response.AuthResponse;
 import com.fluxbanker.api.dto.response.UserResponse;
 import com.fluxbanker.api.entity.User;
@@ -42,7 +44,6 @@ public class AuthController {
                         .success(true)
                         .message("User registered successfully")
                         .token(accessToken)
-                        .name(request.getFirstName() + " " + request.getLastName())
                         .user(UserResponse.fromEntity(createdUser))
                         .build());
     }
@@ -52,13 +53,12 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request,
             HttpServletRequest req,
             HttpServletResponse res) {
-        String[] result = authService.loginWithName(request, req, res);
+        String accessToken = authService.login(request, req, res);
         return ResponseEntity.ok(
                 AuthResponse.builder()
                         .success(true)
                         .message("User logged in successfully")
-                        .token(result[0])
-                        .name(result[1])
+                        .token(accessToken)
                         .build());
     }
 
@@ -84,5 +84,50 @@ public class AuthController {
                         .token(accessToken)
                         .build());
     }
+
+    /** POST /auth/forgot-password */
+    @PostMapping("/forgot-password")
+    public ResponseEntity<AuthResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        authService.forgotPassword(request);
+        return ResponseEntity.ok(
+                AuthResponse.builder()
+                        .success(true)
+                        .message("Password reset link sent to your email")
+                        .build());
+    }
+
+    /** GET /auth/validate-reset-token — used to check if token is still valid before showing reset form */
+    @GetMapping("/validate-reset-token")
+    public ResponseEntity<AuthResponse> validateResetToken(@RequestParam String token) {
+        authService.validateResetToken(token);
+        return ResponseEntity.ok(
+                AuthResponse.builder()
+                        .success(true)
+                        .message("Token is valid")
+                        .build());
+    }
+
+    /** GET /auth/verify-email — used to verify the user's email address */
+    @GetMapping("/verify-email")
+    public ResponseEntity<AuthResponse> verifyEmail(@RequestParam String token) {
+        userService.verifyEmailToken(token);
+        return ResponseEntity.ok(
+                AuthResponse.builder()
+                        .success(true)
+                        .message("Email verified successfully")
+                        .build());
+    }
+
+    /** POST /auth/reset-password */
+    @PostMapping("/reset-password")
+    public ResponseEntity<AuthResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request);
+        return ResponseEntity.ok(
+                AuthResponse.builder()
+                        .success(true)
+                        .message("Password reset successfully")
+                        .build());
+    }
+
 
 }
