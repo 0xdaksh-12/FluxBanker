@@ -1,15 +1,19 @@
-.PHONY: help install build dev dev-infra docker-up docker-down logs clean
+.PHONY: help install build dev dev-infra docker-up docker-down logs clean test test-infra test-docker api-local api-docker full-docker reset
 
 help:
-	@echo "FluxBanker Monorepo Commands:"
-	@echo "  install      Install all dependencies (Maven & pnpm)"
-	@echo "  build        Build the entire project"
-	@echo "  dev          Run both API and App locally (starts infra in Docker automatically)"
-	@echo "  dev-infra    Start only infrastructure in Docker (Postgres, Redis, Kafka, Prometheus, Grafana)"
-	@echo "  docker-up    Start everything (API + Infra) in Docker"
-	@echo "  docker-down  Stop all Docker containers"
-	@echo "  logs         Tail Docker logs"
-	@echo "  clean        Clean all build artifacts"
+	@echo "FluxBanker Commands:"
+	@echo "  install           Install all dependencies"
+	@echo "  test              Test local run (H2)"
+	@echo "  test-infra        Test runs on host with Docker services"
+	@echo "  test-docker       Test runs in Docker with services"
+	@echo "  api-local         Run local with Docker services"
+	@echo "  api-docker        Run API in Docker with Docker services"
+	@echo "  full-docker       Run full stack in Docker"
+	@echo "  dev               Run both API and App locally"
+	@echo "  docker-down       Stop all Docker containers"
+	@echo "  logs              Tail Docker logs"
+	@echo "  clean             Clean build artifacts"
+	@echo "  reset             Full reset: wipe volumes, clean, install, and run dev"
 
 install:
 	cd api && ./mvnw install -DskipTests
@@ -19,23 +23,52 @@ build:
 	cd api && ./mvnw package -DskipTests
 	cd app && pnpm build
 
-dev-infra:
-	cd api && docker compose up -d postgres redis kafka prometheus grafana
+# 1. Test local run (uses H2 in-memory)
+test:
+	cd api && ./mvnw test -Dspring.profiles.active=test
 
-docker-up:
-	cd api && docker compose up -d
+# 2. Test runs on host with Docker servers (requires dev-infra)
+test-infra: dev-infra
+	cd api && ./mvnw test -Dspring.profiles.active=test,test-infra
+
+# 3. Test runs in Docker with servers
+test-docker: dev-infra
+	docker compose run --rm tester ./mvnw test -Dspring.profiles.active=test,test-infra
+
+# 4. Run local with Docker services (API on host, DB/Kafka in Docker)
+api-local: dev-infra
+	cd api && set -a && . ./.env && set +a && ./mvnw spring-boot:run
+
+# 5. Run API in Docker with Docker services (containerization for API)
+api-docker:
+	docker compose up -d --build api
+
+# 6. Run Full Stack in Docker
+full-docker:
+	docker compose up -d --build
+
+dev-infra:
+	docker compose up -d postgres redis kafka prometheus grafana
+
+docker-up: full-docker
 
 docker-down:
-	cd api && docker compose down
+	docker compose down
 
 logs:
-	cd api && docker compose logs -f
+	docker compose logs -f
 
 dev: dev-infra
 	# Run API in background and App in foreground
-	cd api && ./mvnw spring-boot:run &
+	cd api && set -a && . ./.env && set +a && ./mvnw spring-boot:run &
 	cd app && pnpm dev
 
 clean:
 	cd api && ./mvnw clean
 	cd app && rm -rf dist node_modules
+
+reset:
+	docker compose down -v
+	$(MAKE) clean
+	$(MAKE) install
+	$(MAKE) dev
