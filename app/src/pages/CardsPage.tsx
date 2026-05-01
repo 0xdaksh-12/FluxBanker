@@ -8,7 +8,7 @@ import {
 } from "../hooks/useCards";
 import { useAccounts } from "../hooks/useAccounts";
 import { useAuthStore } from "../store/authStore";
-import { Card } from "../types";
+import type { Card } from "../types";
 import { Modal } from "../components/ui/Modal";
 import { toast } from "sonner";
 import { CustomSelect } from "../components/ui/CustomSelect";
@@ -54,7 +54,7 @@ const InteractiveCard = ({ card }: { card: Card }) => {
           setPin("");
         },
         onError: () => toast.error("Failed to set PIN"),
-      }
+      },
     );
   };
 
@@ -87,7 +87,9 @@ const InteractiveCard = ({ card }: { card: Card }) => {
             </div>
             <div className={styles.chipSection}>
               <div className={styles.chip}></div>
-              <span className={`material-symbols-outlined ${styles.wifiIcon}`}>wifi</span>
+              <span className={`material-symbols-outlined ${styles.wifiIcon}`}>
+                wifi
+              </span>
             </div>
             <div className={styles.cardNumber}>
               {formatCardNumber(card.cardNumber)}
@@ -95,7 +97,9 @@ const InteractiveCard = ({ card }: { card: Card }) => {
             <div className={styles.cardDetails}>
               <div className={styles.cardHolder}>
                 <span className={styles.label}>Cardholder</span>
-                <span className={styles.value}>{user?.firstName} {user?.lastName}</span>
+                <span className={styles.value}>
+                  {user?.firstName} {user?.lastName}
+                </span>
               </div>
               <div className={styles.cardExpiry}>
                 <span className={styles.label}>Valid Thru</span>
@@ -110,7 +114,9 @@ const InteractiveCard = ({ card }: { card: Card }) => {
             <div className={styles.signature}>
               <span className={styles.cvv}>{card.cvv}</span>
             </div>
-            <div style={{ marginTop: "140px", fontSize: "0.8rem", opacity: 0.8 }}>
+            <div
+              style={{ marginTop: "140px", fontSize: "0.8rem", opacity: 0.8 }}
+            >
               For customer service call 1-800-FLUX-BNK
             </div>
           </div>
@@ -149,7 +155,8 @@ const InteractiveCard = ({ card }: { card: Card }) => {
           style={{ display: "flex", flexDirection: "column", gap: "24px" }}
         >
           <p style={{ fontSize: "14px", color: "var(--ink-muted)" }}>
-            Enter a new 4-digit PIN for your card ending in {card.cardNumber.slice(-4)}.
+            Enter a new 4-digit PIN for your card ending in{" "}
+            {card.cardNumber.slice(-4)}.
           </p>
           <div className="form-group">
             <label className="form-label">New PIN</label>
@@ -162,7 +169,11 @@ const InteractiveCard = ({ card }: { card: Card }) => {
               onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
               className="form-input"
               placeholder="****"
-              style={{ letterSpacing: "8px", fontSize: "1.5rem", textAlign: "center" }}
+              style={{
+                letterSpacing: "8px",
+                fontSize: "1.5rem",
+                textAlign: "center",
+              }}
               autoFocus
             />
           </div>
@@ -187,7 +198,9 @@ export const CardsPage = () => {
 
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [selectedAccountId, setSelectedAccountId] = useState("");
-  const [selectedType, setSelectedType] = useState<"PHYSICAL" | "VIRTUAL">("VIRTUAL");
+  const [selectedType, setSelectedType] = useState<"PHYSICAL" | "VIRTUAL">(
+    "VIRTUAL",
+  );
 
   const handleIssueCard = (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,16 +212,20 @@ export const CardsPage = () => {
       { accountId: selectedAccountId, type: selectedType },
       {
         onSuccess: () => {
-          toast.success(`${selectedType === "VIRTUAL" ? "Virtual" : "Physical"} Card Issued!`);
+          toast.success(
+            `${selectedType === "VIRTUAL" ? "Virtual" : "Physical"} Card Issued!`,
+          );
           setIsIssueModalOpen(false);
           setSelectedAccountId("");
         },
         onError: () => toast.error("Failed to issue card"),
-      }
+      },
     );
   };
 
-  const eligibleAccounts = accounts?.filter(a => a.type === "DEPOSITORY" || a.type === "CREDIT") || [];
+  const eligibleAccounts =
+    accounts?.filter((a) => a.type === "DEPOSITORY" || a.type === "CREDIT") ||
+    [];
 
   return (
     <div>
@@ -228,12 +245,24 @@ export const CardsPage = () => {
 
       {isLoadingCards ? (
         <div className={styles.grid}>
-          <div className="skeleton" style={{ height: "200px", borderRadius: "16px" }}></div>
-          <div className="skeleton" style={{ height: "200px", borderRadius: "16px" }}></div>
+          <div
+            className="skeleton"
+            style={{ height: "200px", borderRadius: "16px" }}
+          ></div>
+          <div
+            className="skeleton"
+            style={{ height: "200px", borderRadius: "16px" }}
+          ></div>
         </div>
       ) : cards?.length === 0 ? (
-        <div className="bento-box" style={{ textAlign: "center", padding: "48px" }}>
-          <span className="material-symbols-outlined" style={{ fontSize: "48px", color: "var(--ink-muted)" }}>
+        <div
+          className="bento-box"
+          style={{ textAlign: "center", padding: "48px" }}
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: "48px", color: "var(--ink-muted)" }}
+          >
             credit_card_off
           </span>
           <h3 style={{ marginTop: "16px" }}>No Cards Found</h3>
@@ -261,7 +290,10 @@ export const CardsPage = () => {
         onClose={() => setIsIssueModalOpen(false)}
         title="Issue New Card"
       >
-        <form onSubmit={handleIssueCard} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        <form
+          onSubmit={handleIssueCard}
+          style={{ display: "flex", flexDirection: "column", gap: "24px" }}
+        >
           <CustomSelect
             label="Linked Account"
             value={selectedAccountId}
@@ -269,11 +301,11 @@ export const CardsPage = () => {
             className="form-group"
             options={[
               { value: "", label: "-- Select an Account --" },
-              ...eligibleAccounts.map(a => ({
+              ...eligibleAccounts.map((a) => ({
                 value: a.id,
                 label: `${a.name} (...${a.mask})`,
-                description: `Balance: ₹${a.availableBalance.toFixed(2)}`
-              }))
+                description: `Balance: ₹${a.availableBalance.toFixed(2)}`,
+              })),
             ]}
           />
 
@@ -283,8 +315,16 @@ export const CardsPage = () => {
             onChange={(v) => setSelectedType(v as "PHYSICAL" | "VIRTUAL")}
             className="form-group"
             options={[
-              { value: "VIRTUAL", label: "Virtual Card", description: "Available instantly for online purchases" },
-              { value: "PHYSICAL", label: "Physical Card", description: "Shipped to your address in 5-7 days" },
+              {
+                value: "VIRTUAL",
+                label: "Virtual Card",
+                description: "Available instantly for online purchases",
+              },
+              {
+                value: "PHYSICAL",
+                label: "Physical Card",
+                description: "Shipped to your address in 5-7 days",
+              },
             ]}
           />
 
@@ -292,7 +332,11 @@ export const CardsPage = () => {
             type="submit"
             className="btn btn-primary"
             disabled={issueMutation.isPending || !selectedAccountId}
-            style={{ width: "100%", justifyContent: "center", marginTop: "8px" }}
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              marginTop: "8px",
+            }}
           >
             {issueMutation.isPending ? "Issuing..." : "Confirm Issue"}
           </button>

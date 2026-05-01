@@ -13,6 +13,9 @@ import com.fluxbanker.api.security.CustomUserDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import com.fluxbanker.api.dto.request.UserUpdateRequest;
+import com.fluxbanker.api.dto.request.KycUpdateRequest;
+import com.fluxbanker.api.exception.UnauthorizedException;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -24,6 +27,8 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null)
+            throw new UnauthorizedException("User not authenticated");
         User user = userService.getUserById(userDetails.getUserId());
         return ResponseEntity.ok(UserResponse.fromEntity(user));
     }
@@ -32,7 +37,7 @@ public class UserController {
     public ResponseEntity<UserResponse> updateProfile(@RequestBody UserUpdateRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null)
-            return ResponseEntity.status(401).build();
+            throw new UnauthorizedException("User not authenticated");
         User user = userService.updateUser(userDetails.getUserId(), request);
         return ResponseEntity.ok(UserResponse.fromEntity(user));
     }
@@ -40,8 +45,7 @@ public class UserController {
     @PostMapping("/me/verify-email")
     public ResponseEntity<UserResponse> verifyEmail(@AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null)
-            return ResponseEntity.status(401).build();
-        log.info("Requesting email verification for user: {}", userDetails.getUserId());
+            throw new UnauthorizedException("User not authenticated");
         User user = userService.sendVerificationEmail(userDetails.getUserId());
         return ResponseEntity.ok(UserResponse.fromEntity(user));
     }
@@ -50,16 +54,16 @@ public class UserController {
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponse> updateKycStatus(
             @PathVariable java.util.UUID userId,
-            @RequestBody java.util.Map<String, String> request) {
+            @Valid @RequestBody KycUpdateRequest request) {
 
-        String statusStr = request.get("status");
-        if (statusStr == null) {
-            return ResponseEntity.badRequest().build();
+        String statusStr = request.getStatus();
+
+        try {
+            User.KycStatus status = User.KycStatus.valueOf(statusStr.toUpperCase());
+            User user = userService.updateKycStatus(userId, status);
+            return ResponseEntity.ok(UserResponse.fromEntity(user));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid KYC status: " + statusStr);
         }
-
-        User.KycStatus status = User.KycStatus.valueOf(statusStr.toUpperCase());
-        User user = userService.updateKycStatus(userId, status);
-
-        return ResponseEntity.ok(UserResponse.fromEntity(user));
     }
 }

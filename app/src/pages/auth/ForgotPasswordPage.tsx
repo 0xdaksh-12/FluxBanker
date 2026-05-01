@@ -76,7 +76,7 @@ export const ForgotPasswordPage = () => {
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email" className="form-label">Email Address</label>
               <input
                 id="email"
                 type="email"
@@ -84,7 +84,7 @@ export const ForgotPasswordPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="form-control"
+                className="form-input"
               />
             </div>
             <button

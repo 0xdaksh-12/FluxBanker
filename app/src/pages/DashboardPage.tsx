@@ -8,14 +8,17 @@ import { BankCard } from "../components/ui/BankCard";
 import { TransactionsTable } from "../components/ui/TransactionsTable";
 import { BankCardSkeleton, Skeleton } from "../components/ui/Skeleton";
 import { Link } from "react-router-dom";
-import { PaginatedResponse, Transaction } from "../types";
+import type { PaginatedResponse, Transaction } from "../types";
 import styles from "./DashboardPage.module.css";
 
 export const DashboardPage = () => {
   const user = useAuthStore((state) => state.user);
   const { data: accounts, isLoading: accountsLoading } = useAccounts();
 
-  const { data: transactions, isLoading: txLoading } = useUserTransactions(0, 5);
+  const { data: transactions, isLoading: txLoading } = useUserTransactions(
+    0,
+    5,
+  );
 
   const totalBalance = useMemo(
     () => accounts?.reduce((sum, acc) => sum + acc.currentBalance, 0) || 0,

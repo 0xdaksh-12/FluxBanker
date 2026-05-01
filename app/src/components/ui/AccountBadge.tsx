@@ -1,4 +1,4 @@
-import { Account } from "../../types";
+import type { Account } from "../../types";
 import styles from "./AccountBadge.module.css";
 
 interface AccountBadgeProps {
