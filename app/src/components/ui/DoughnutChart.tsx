@@ -33,16 +33,8 @@ export const DoughnutChart = ({ accounts }: DoughnutChartProps) => {
   }
 
   return (
-    <div style={{ width: "100%", height: "100%", position: "relative" }}>
-      <div
-        style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-      >
-        <ResponsiveContainer
-          width="100%"
-          height="100%"
-          minWidth={0}
-          minHeight={0}
-        >
+    <div style={{ width: "100%", height: "100%", minHeight: "300px", position: "relative" }}>
+      <ResponsiveContainer width="100%" height="100%" debounce={50}>
           <PieChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
             <Pie
               data={data}
@@ -82,7 +74,6 @@ export const DoughnutChart = ({ accounts }: DoughnutChartProps) => {
             />
           </PieChart>
         </ResponsiveContainer>
-      </div>
     </div>
   );
 };

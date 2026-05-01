@@ -19,7 +19,7 @@ export const BalanceWidget = ({
       <div className={styles.amount}>
         <CountUpComponent
           end={totalBalance}
-          prefix="$"
+          prefix="₹"
           separator=","
           decimals={2}
           duration={1.5}
