@@ -25,18 +25,18 @@ export const depositFunds = async (
 };
 
 export const applyForLoan = async (
-  principal: number,
+  principalAmount: number,
   termMonths: number,
 ): Promise<Account> => {
-  const { data } = await apiClient.post<Account>("/accounts/loan", {
-    principal,
+  const { data } = await apiClient.post<Account>("/accounts/apply/loan", {
+    principalAmount,
     termMonths,
   });
   return data;
 };
 
 export const openCreditCard = async (creditLimit: number): Promise<Account> => {
-  const { data } = await apiClient.post<Account>("/accounts/credit-card", {
+  const { data } = await apiClient.post<Account>("/accounts/apply/credit", {
     creditLimit,
   });
   return data;

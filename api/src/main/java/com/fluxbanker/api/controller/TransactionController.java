@@ -48,9 +48,17 @@ public class TransactionController {
             @RequestBody Map<String, Object> request,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        UUID sourceAccountId = UUID.fromString(request.get("sourceAccountId").toString());
-        UUID destinationAccountId = UUID.fromString(request.get("destinationAccountId").toString());
-        BigDecimal amount = new BigDecimal(request.get("amount").toString());
+        Object sourceObj = request.get("sourceAccountId");
+        Object destObj = request.get("destinationAccountId");
+        Object amountObj = request.get("amount");
+
+        if (sourceObj == null || destObj == null || amountObj == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        UUID sourceAccountId = UUID.fromString(sourceObj.toString());
+        UUID destinationAccountId = UUID.fromString(destObj.toString());
+        BigDecimal amount = new BigDecimal(amountObj.toString());
 
         transactionService.validateAccountOwnership(sourceAccountId, userDetails.getUserId());
         transactionService.transferMoney(sourceAccountId, destinationAccountId, amount);
