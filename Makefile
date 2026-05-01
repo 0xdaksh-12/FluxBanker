@@ -20,9 +20,16 @@ install:
 	cd api && ./mvnw install -DskipTests
 	cd app && pnpm install
 
-build:
+build-api:
 	cd api && ./mvnw package -DskipTests
+
+build-app:
 	cd app && pnpm build
+
+build: build-api build-app
+
+prod-build: build
+	@echo "Production build complete. Ready for deployment."
 
 # 1. Test local run (uses H2 in-memory)
 test:
