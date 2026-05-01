@@ -1,4 +1,4 @@
-import { Account } from "../../types";
+import type { Account } from "../../types";
 import { formatCurrency } from "../../lib/utils";
 import { AccountBadge } from "./AccountBadge";
 import styles from "./BankCard.module.css";
@@ -40,7 +40,13 @@ export const BankCard = ({ account }: BankCardProps) => {
       </div>
 
       <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
-        <p style={{ fontSize: "0.85rem", color: "var(--ink-muted)", marginBottom: "4px" }}>
+        <p
+          style={{
+            fontSize: "0.85rem",
+            color: "var(--ink-muted)",
+            marginBottom: "4px",
+          }}
+        >
           {getBalanceLabel()}
         </p>
         <div className={styles.balance}>

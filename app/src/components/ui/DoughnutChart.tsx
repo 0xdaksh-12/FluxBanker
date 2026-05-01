@@ -1,5 +1,5 @@
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { Account } from "../../types";
+import type { Account } from "../../types";
 
 const COLORS = ["#1C3829", "#166534", "#6B7A69", "#DDD9CF", "#1C2B1A"];
 

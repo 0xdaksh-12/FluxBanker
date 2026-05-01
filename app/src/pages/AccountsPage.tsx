@@ -5,7 +5,7 @@ import {
   useApplyForLoan,
   useOpenCreditCard,
 } from "../hooks/useAccounts";
-import { Account } from "../types";
+import type { Account } from "../types";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Modal } from "../components/ui/Modal";
@@ -26,7 +26,7 @@ export const AccountsPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [productType, setProductType] = useState<string>("CHECKING");
-  
+
   const [principal, setPrincipal] = useState("10000");
   const [termMonths, setTermMonths] = useState("60");
   const [creditLimit, setCreditLimit] = useState("5000");
@@ -34,7 +34,10 @@ export const AccountsPage = () => {
   // Deposit Modal State
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState("1000");
-  const [targetAccount, setTargetAccount] = useState<Pick<Account, "id" | "mask"> | null>(null);
+  const [targetAccount, setTargetAccount] = useState<Pick<
+    Account,
+    "id" | "mask"
+  > | null>(null);
 
   const handleCreate = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -51,18 +54,21 @@ export const AccountsPage = () => {
 
     if (productType === "LOAN") {
       applyLoanMutation.mutate(
-        { principal: parseFloat(principal), termMonths: parseInt(termMonths, 10) },
-        { onSuccess: onSuccessHandler }
+        {
+          principal: parseFloat(principal),
+          termMonths: parseInt(termMonths, 10),
+        },
+        { onSuccess: onSuccessHandler },
       );
     } else if (productType === "CREDIT_CARD") {
       openCreditMutation.mutate(
         { creditLimit: parseFloat(creditLimit) },
-        { onSuccess: onSuccessHandler }
+        { onSuccess: onSuccessHandler },
       );
     } else {
       createMutation.mutate(
         { name, subtype: productType as Account["subtype"] },
-        { onSuccess: onSuccessHandler }
+        { onSuccess: onSuccessHandler },
       );
     }
   };
@@ -91,7 +97,7 @@ export const AccountsPage = () => {
           setIsDepositModalOpen(false);
           setDepositAmount("1000");
         },
-      }
+      },
     );
     toast.promise(promise, {
       loading: "Processing deposit...",
@@ -101,7 +107,9 @@ export const AccountsPage = () => {
   };
 
   const isPending =
-    createMutation.isPending || applyLoanMutation.isPending || openCreditMutation.isPending;
+    createMutation.isPending ||
+    applyLoanMutation.isPending ||
+    openCreditMutation.isPending;
 
   return (
     <div>
@@ -110,8 +118,13 @@ export const AccountsPage = () => {
           <h1>Accounts</h1>
           <p>Manage your depository, credit, and loan accounts.</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-          <span className="material-symbols-outlined">{showForm ? "close" : "add"}</span>
+        <button
+          className="btn btn-primary"
+          onClick={() => setShowForm(!showForm)}
+        >
+          <span className="material-symbols-outlined">
+            {showForm ? "close" : "add"}
+          </span>
           {showForm ? "Cancel" : "Open Account"}
         </button>
       </div>
@@ -136,18 +149,38 @@ export const AccountsPage = () => {
                 />
               </div>
             )}
-            
+
             <CustomSelect
               label="Account Product"
               value={productType}
               onChange={(val) => setProductType(val as string)}
               className="form-group"
               options={[
-                { value: "CHECKING", label: "Checking", description: "Standard account for daily transactions" },
-                { value: "SAVINGS", label: "Savings", description: "Earn interest on your deposited funds" },
-                { value: "MONEY_MARKET", label: "Money Market", description: "High-yield account with limited transfers" },
-                { value: "CREDIT_CARD", label: "Credit Card", description: "Flexible credit line for your purchases" },
-                { value: "LOAN", label: "Personal Loan", description: "Fixed-rate personal loan" },
+                {
+                  value: "CHECKING",
+                  label: "Checking",
+                  description: "Standard account for daily transactions",
+                },
+                {
+                  value: "SAVINGS",
+                  label: "Savings",
+                  description: "Earn interest on your deposited funds",
+                },
+                {
+                  value: "MONEY_MARKET",
+                  label: "Money Market",
+                  description: "High-yield account with limited transfers",
+                },
+                {
+                  value: "CREDIT_CARD",
+                  label: "Credit Card",
+                  description: "Flexible credit line for your purchases",
+                },
+                {
+                  value: "LOAN",
+                  label: "Personal Loan",
+                  description: "Fixed-rate personal loan",
+                },
               ]}
             />
 
@@ -220,11 +253,18 @@ export const AccountsPage = () => {
               {account.type !== "LOAN" && account.subtype !== "CREDIT_CARD" && (
                 <button
                   className="btn btn-outline"
-                  style={{ width: "100%", justifyContent: "center", marginTop: "12px" }}
+                  style={{
+                    width: "100%",
+                    justifyContent: "center",
+                    marginTop: "12px",
+                  }}
                   onClick={() => handleDeposit(account.id, account.mask)}
                   disabled={depositMutation.isPending}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: "1.1rem" }}>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: "1.1rem" }}
+                  >
                     payments
                   </span>
                   Simulate Deposit
@@ -240,9 +280,13 @@ export const AccountsPage = () => {
         onClose={() => setIsDepositModalOpen(false)}
         title="Simulate Deposit"
       >
-        <form onSubmit={handleSubmitDeposit} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        <form
+          onSubmit={handleSubmitDeposit}
+          style={{ display: "flex", flexDirection: "column", gap: "24px" }}
+        >
           <p style={{ fontSize: "14px", color: "var(--ink-muted)" }}>
-            Adding funds to account ending in <strong>{targetAccount?.mask}</strong>.
+            Adding funds to account ending in{" "}
+            <strong>{targetAccount?.mask}</strong>.
           </p>
           <div className="form-group">
             <label className="form-label">Amount (₹)</label>

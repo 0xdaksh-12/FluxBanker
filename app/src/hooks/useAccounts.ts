@@ -1,7 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAccounts, createAccount, depositFunds, applyForLoan, openCreditCard } from "../api/accounts";
+import {
+  getAccounts,
+  createAccount,
+  depositFunds,
+  applyForLoan,
+  openCreditCard,
+} from "../api/accounts";
 import { useAuthStore } from "../store/authStore";
-import { Account } from "../types";
+import type { Account } from "../types";
 
 /**
  * Custom hook to fetch the bank accounts for the currently authenticated user.
@@ -41,8 +47,13 @@ export const useApplyForLoan = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ principal, termMonths }: { principal: number; termMonths: number }) =>
-      applyForLoan(principal, termMonths),
+    mutationFn: ({
+      principal,
+      termMonths,
+    }: {
+      principal: number;
+      termMonths: number;
+    }) => applyForLoan(principal, termMonths),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
