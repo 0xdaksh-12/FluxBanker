@@ -58,8 +58,15 @@ public class AccountController {
         BigDecimal principalAmount;
         Integer termMonths;
         try {
-            principalAmount = new BigDecimal(request.getOrDefault("principalAmount", "5000").toString());
-            termMonths = Integer.parseInt(request.getOrDefault("termMonths", "36").toString());
+            Object principalObj = request.get("principalAmount");
+            Object termObj = request.get("termMonths");
+            
+            if (principalObj == null || termObj == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            
+            principalAmount = new BigDecimal(principalObj.toString());
+            termMonths = Integer.parseInt(termObj.toString());
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -78,7 +85,11 @@ public class AccountController {
         UUID userId = userDetails.getUserId();
         BigDecimal creditLimit;
         try {
-            creditLimit = new BigDecimal(request.getOrDefault("creditLimit", "10000").toString());
+            Object creditLimitObj = request.get("creditLimit");
+            if (creditLimitObj == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            creditLimit = new BigDecimal(creditLimitObj.toString());
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().build();
         }
