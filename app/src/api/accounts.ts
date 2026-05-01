@@ -36,11 +36,7 @@ export const applyForLoan = async (
 };
 
 export const openCreditCard = async (creditLimit: number): Promise<Account> => {
-<<<<<<< main
   const { data } = await apiClient.post<Account>("/accounts/apply/credit", {
-=======
-  const { data } = await apiClient.post<Account>("/accounts/credit-card", {
->>>>>>> deploy
     creditLimit,
   });
   return data;
