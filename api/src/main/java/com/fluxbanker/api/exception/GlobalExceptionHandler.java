@@ -46,6 +46,16 @@ public class GlobalExceptionHandler {
             .build());
   }
 
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+    return ResponseEntity.badRequest().body(
+        ErrorResponse.builder()
+            .success(false)
+            .message(ex.getMessage())
+            .build());
+  }
+
+
   /**
    * Handles @Valid failures — mirrors Node's validationHandler Zod error mapping.
    * Returns only the first error per field (de-duplicated by path).
