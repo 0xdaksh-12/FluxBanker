@@ -39,24 +39,22 @@
   font-weight: 400;
 }
 
-@media (prefers-color-scheme: dark) {
-  .infoPanel {
-    background: var(--paper-2);
-    color: var(--ink);
-    border-color: var(--border);
-  }
+[data-theme="dark"] .infoPanel {
+  background: var(--paper-2);
+  color: var(--ink);
+  border-color: var(--border);
+}
 
-  .infoPanel .material-symbols-outlined {
-    color: var(--ink);
-  }
+[data-theme="dark"] .infoPanel .material-symbols-outlined {
+  color: var(--ink);
+}
 
-  .infoPanelTitle {
-    color: var(--ink);
-  }
+[data-theme="dark"] .infoPanelTitle {
+  color: var(--ink);
+}
 
-  .infoPanelText {
-    color: var(--ink-muted);
-  }
+[data-theme="dark"] .infoPanelText {
+  color: var(--ink-muted);
 }
 
 .infoPanelDivider {

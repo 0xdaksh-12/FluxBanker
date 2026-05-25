@@ -8,6 +8,27 @@
 @media (max-width: 768px) {
   .layout {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .sidebar {
+    position: static;
+  }
+
+  .accountList {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    gap: 8px;
+    width: 100%;
+    scrollbar-width: thin;
+  }
+
+  .accountBtn {
+    flex-shrink: 0;
+    width: auto;
+    white-space: nowrap;
+    gap: 16px;
   }
 }
 

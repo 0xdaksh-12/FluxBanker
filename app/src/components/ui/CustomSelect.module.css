@@ -143,3 +143,16 @@
 [data-theme="dark"] .dropdown {
   box-shadow: 8px 8px 0px var(--ink);
 }
+
+@media (max-width: 480px) {
+  .optionContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .optionRightLabel {
+    align-self: flex-end;
+    margin-top: -12px; /* Pull it slightly up if needed, or let it stack naturally */
+  }
+}
