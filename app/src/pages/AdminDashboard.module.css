@@ -232,3 +232,11 @@
   background: var(--warning-bg);
   box-shadow: 4px 4px 0px var(--warning);
 }
+
+@media (max-width: 640px) {
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
