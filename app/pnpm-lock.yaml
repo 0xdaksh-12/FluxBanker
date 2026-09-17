@@ -12,11 +12,11 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.74.0(react@19.2.5))
       '@tanstack/react-query':
-        specifier: ^5.100.5
-        version: 5.100.6(react@19.2.5)
+        specifier: ^5.102.8
+        version: 5.102.8(react@19.2.5)
       axios:
         specifier: ^1.15.2
-        version: 1.15.2
+        version: 1.15.2(debug@4.4.3)
       react:
         specifier: ^19.2.5
         version: 19.2.5
@@ -380,11 +380,11 @@ packages:
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
-  '@tanstack/query-core@5.100.6':
-    resolution: {integrity: sha512-Os2CPUr98to98RYm+D4qGqGkiffn7MGSyl2547a4MljVkHE30AMJRqTiyCqBfMwzAx/I91vCkAxp5tHSla6Twg==}
+  '@tanstack/query-core@5.102.8':
+    resolution: {integrity: sha512-ZNjkJ33CqvPNec/6lZBnHqLc3EVGPZ9ySLhYahU9TcuRFdmwXewuj0c4hwSWcGHqEUwcSrKeZ+oGcvPBqXcQcg==}
 
-  '@tanstack/react-query@5.100.6':
-    resolution: {integrity: sha512-uVSrps0PV16Cxmcn2rvL+dUhwTpTUtiRW347AEeYxMZXO2pZe9ja7E24PAMGoQ5u2g89DD8u4QhOviBk+RN8RA==}
+  '@tanstack/react-query@5.102.8':
+    resolution: {integrity: sha512-TYBea4OuXWD7MhaSHq069TWbFe7rcwWN6kzT7JF0OKi1K6c1gTv2IzD6A6ExJsCMozdkqBWeuIUZmu4KQg0O5A==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -1606,11 +1606,11 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
-  '@tanstack/query-core@5.100.6': {}
+  '@tanstack/query-core@5.102.8': {}
 
-  '@tanstack/react-query@5.100.6(react@19.2.5)':
+  '@tanstack/react-query@5.102.8(react@19.2.5)':
     dependencies:
-      '@tanstack/query-core': 5.100.6
+      '@tanstack/query-core': 5.102.8
       react: 19.2.5
 
   '@tybys/wasm-util@0.10.1':
@@ -1773,9 +1773,9 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  axios@1.15.2:
+  axios@1.15.2(debug@4.4.3):
     dependencies:
-      follow-redirects: 1.16.0
+      follow-redirects: 1.16.0(debug@4.4.3)
       form-data: 4.0.5
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
@@ -2025,7 +2025,9 @@ snapshots:
 
   flatted@3.4.2: {}
 
-  follow-redirects@1.16.0: {}
+  follow-redirects@1.16.0(debug@4.4.3):
+    optionalDependencies:
+      debug: 4.4.3
 
   form-data@4.0.5:
     dependencies:
